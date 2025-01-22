@@ -1,10 +1,13 @@
 from fastapi import FastAPI, Query
 import requests
+import os
+from dotenv import load_dotenv
 
 app = FastAPI()
+load_dotenv()
 
 # OpenWeatherMap API Key
-OPENWEATHERMAP_API_KEY = "73f3e54f12f068fb0aff346d9c299e21"
+OPENWEATHERMAP_API_KEY = os.environ.get("OPENWEATHERMAP_API_KEY")
 
 # OSRM base URL
 OSRM_BASE_URL = "http://router.project-osrm.org"
@@ -16,17 +19,18 @@ def get_directions(
     destination_lat: float = Query(..., description="Latitude of the destination"),
     destination_lon: float = Query(..., description="Longitude of the destination"),
 ):
-    """
-    Get directions from origin to destination considering traffic and weather conditions.
-    """
-    # Step 1: Get directions from OSRM
-    print(origin_lat, origin_lon, destination_lat, destination_lon)
+    try:
+        print(f"Origin: ({origin_lat}, {origin_lon}), Destination: ({destination_lat}, {destination_lon})")
+    except Exception as e:
+        return {"error": f"Invalid query parameters: {e}"}
+    
     osrm_route_url = (
         f"{OSRM_BASE_URL}/route/v1/driving/{origin_lon},{origin_lat};{destination_lon},{destination_lat}"
         f"?overview=full&geometries=geojson"
     )
     osrm_response = requests.get(osrm_route_url)
     osrm_data = osrm_response.json()
+    print(osrm_data)
 
     if osrm_response.status_code != 200 or "routes" not in osrm_data or not osrm_data["routes"]:
         return {"error": "Unable to fetch directions from OSRM."}
