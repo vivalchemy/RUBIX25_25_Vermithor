@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { SearchBar } from '@/components/search/SearchBar'
 import { Map } from '@/components/search/Map'
 import { ProductList } from '@/components/search/ProductList'
-import { Pagination } from '@/components/search/Pagination'
 import { TopRecommendations } from '@/components/search/TopRecommendation'
 import axios from 'axios'
 import { Products } from '@/lib/types'
 import { Loader2 } from 'lucide-react'
+import { EnhancedPagination } from '@/components/search/EnhancedPagination'
 
 export default function Search({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const [products, setProducts] = useState<Products>([]);
@@ -73,7 +73,7 @@ export default function Search({ searchParams }: { searchParams: { [key: string]
         </div>
         <div>
           <ProductList products={paginatedProducts} />
-          <Pagination currentPage={page} totalPages={totalPages} />
+          <EnhancedPagination currentPage={page} totalPages={totalPages} />
         </div>
       </div>
     </div>
