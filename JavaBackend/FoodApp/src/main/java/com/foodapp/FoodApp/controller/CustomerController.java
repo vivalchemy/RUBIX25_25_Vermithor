@@ -1,0 +1,87 @@
+package com.foodapp.FoodApp.controllers;
+
+import com.foodapp.FoodApp.entities.Customer;
+import com.foodapp.FoodApp.entities.Order;
+import com.foodapp.FoodApp.entities.Review;
+import com.foodapp.FoodApp.services.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
+
+    private final CustomerService customerService;
+
+    @Autowired
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+    // Create or update a customer
+    @PostMapping
+    public ResponseEntity<Customer> createOrUpdateCustomer(@RequestBody Customer customer) {
+        Customer savedCustomer = customerService.saveCustomer(customer);
+        return ResponseEntity.ok(savedCustomer);
+    }
+
+    // Get a customer by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
+        Optional<Customer> customer = customerService.getCustomerById(id);
+        return customer.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Get all customers
+    @GetMapping
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        List<Customer> customers = customerService.getAllCustomers();
+        return ResponseEntity.ok(customers);
+    }
+
+    // Delete a customer by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Find a customer by email
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Customer> getCustomerByEmail(@PathVariable String email) {
+        Optional<Customer> customer = customerService.getCustomerByEmail(email);
+        return customer.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Add an order to a customer
+    @PostMapping("/{customerId}/orders")
+    public ResponseEntity<Customer> addOrderToCustomer(
+            @PathVariable Long customerId,
+            @RequestBody Order order) {
+        Customer updatedCustomer = customerService.addOrderToCustomer(customerId, order);
+        if (updatedCustomer != null) {
+            return ResponseEntity.ok(updatedCustomer);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Add a review to a customer
+    @PostMapping("/{customerId}/reviews")
+    public ResponseEntity<Customer> addReviewToCustomer(
+            @PathVariable Long customerId,
+            @RequestBody Review review) {
+        Customer updatedCustomer = customerService.addReviewToCustomer(customerId, review);
+        if (updatedCustomer != null) {
+            return ResponseEntity.ok(updatedCustomer);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
