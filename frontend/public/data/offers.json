@@ -1,0 +1,40 @@
+{
+  "offers": [
+    {
+      "id": 1,
+      "title": "Fresh Vegetables",
+      "description": "20% off on local farm produce",
+      "image": "/products/vegetable.avif"
+    },
+    {
+      "id": 2,
+      "title": "Organic Fruits",
+      "description": "Buy 2 Get 1 Free on weekends",
+      "image": "/products/apples.avif"
+    },
+    {
+      "id": 3,
+      "title": "Artisan Bread",
+      "description": "Free delivery on orders above $30",
+      "image": "/products/bread.avif"
+    },
+    {
+      "id": 4,
+      "title": "Local Honey",
+      "description": "15% discount on your first purchase",
+      "image": "/products/honey.avif"
+    },
+    {
+      "id": 5,
+      "title": "Farm Fresh Eggs",
+      "description": "10% off on your first dozen",
+      "image": "/products/eggs.avif"
+    },
+    {
+      "id": 6,
+      "title": "Organic Milk",
+      "description": "Buy 1 Get 1 Free this week",
+      "image": "/products/milk.avif"
+    }
+  ]
+}

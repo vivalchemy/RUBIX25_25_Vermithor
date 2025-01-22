@@ -1,0 +1,64 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Organic Apples",
+      "vendor": "Green Farms",
+      "price": 5.99,
+      "rating": 4.5,
+      "timeToArrive": "30 mins",
+      "peopleRequired": 1,
+      "image": "/products/apples.avif"
+    },
+    {
+      "id": 2,
+      "name": "Fresh Bread",
+      "vendor": "Local Bakery",
+      "price": 3.99,
+      "rating": 4.8,
+      "timeToArrive": "20 mins",
+      "peopleRequired": 1,
+      "image": "/products/bread.avif"
+    },
+    {
+      "id": 3,
+      "name": "Vegetable Box",
+      "vendor": "Community Garden",
+      "price": 15.99,
+      "rating": 4.7,
+      "timeToArrive": "45 mins",
+      "peopleRequired": 2,
+      "image": "/products/vegetable.avif"
+    },
+    {
+      "id": 4,
+      "name": "Free-range Eggs",
+      "vendor": "Happy Hens Farm",
+      "price": 4.99,
+      "rating": 4.6,
+      "timeToArrive": "35 mins",
+      "peopleRequired": 1,
+      "image": "/products/eggs.avif"
+    },
+    {
+      "id": 5,
+      "name": "Organic Milk",
+      "vendor": "Dairy Delight",
+      "price": 3.49,
+      "rating": 4.9,
+      "timeToArrive": "25 mins",
+      "peopleRequired": 1,
+      "image": "/products/milk.avif"
+    },
+    {
+      "id": 6,
+      "name": "Artisan Cheese",
+      "vendor": "Cheese Crafters",
+      "price": 7.99,
+      "rating": 4.7,
+      "timeToArrive": "40 mins",
+      "peopleRequired": 1,
+      "image": "/products/cheese.avif"
+    }
+  ]
+}
