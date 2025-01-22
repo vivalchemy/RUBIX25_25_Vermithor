@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 
-export function ProductList({ products }: { products: any[] }) {
+export function TopRecommendations({ products }: { products: any[] }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">All Products</h2>
+      <h2 className="text-2xl font-bold">Top Recommendations</h2>
       <div className="sm:flex sm:space-around sm:flex-wrap sm:gap-8 gap-4">
         {products.map((product) => (
-          <Card key={product.id}>
+          <Card key={product.id} className="min-w-[300px]">
             <CardHeader>
               <CardTitle>{product.name}</CardTitle>
             </CardHeader>
@@ -23,8 +23,6 @@ export function ProductList({ products }: { products: any[] }) {
                 <p className="font-semibold">${product.price.toFixed(2)}</p>
                 <p>{product.vendor}</p>
                 <p>Rating: {product.rating}/5</p>
-                <p>Arrives in: {product.timeToArrive}</p>
-                <p>People required: {product.peopleRequired}</p>
               </div>
             </CardContent>
           </Card>
@@ -33,5 +31,4 @@ export function ProductList({ products }: { products: any[] }) {
     </div>
   )
 }
-
 
