@@ -1,7 +1,8 @@
 export type Customer = {
-  id: string
+  customerId: string
   name: string
   email: string
-  phoneNumber: string
+  phone: string
   location: string
+  address: string
 }
