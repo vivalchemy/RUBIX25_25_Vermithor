@@ -1,6 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Clock, Star } from "lucide-react"
-import Image from "next/image"
 
 import { Button } from "../ui/button"
 import { useRouter } from "next/navigation";
@@ -9,7 +8,7 @@ import { ProductsType } from "@/lib/types";
 export function TopRecommendations({ products }: { products: ProductsType }) {
   const router = useRouter();
   return (
-    <div className="mx-auto container space-y-4">
+    <div className="space-y-4">
       <h2 className="text-2xl font-bold">Top Recommendations</h2>
       <div className="sm:flex sm:space-around sm:flex-wrap sm:gap-8 gap-4">
 

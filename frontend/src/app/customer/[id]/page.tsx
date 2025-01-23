@@ -5,7 +5,7 @@ import { Details } from "@/components/customer/Details"
 import { Offers } from "@/components/customer/Offers"
 import { RecentOrders } from "@/components/customer/RecentOrders"
 import { PurchaseHistory } from "@/components/customer/PurchaseHistory"
-import type { CustomerType, OffersType, OrdersType, ProductsType } from "@/lib/types"
+import type { CustomerType, OrdersType, ProductsType } from "@/lib/types"
 import axios from "axios"
 import { Loader2 } from "lucide-react"
 import { useParams } from "next/navigation"
@@ -18,11 +18,6 @@ const mockCustomer: CustomerType = {
   phoneNumber: "+1 234 567 8900",
   location: "New York, NY",
 }
-
-const mockOffers: OffersType = [
-  { id: 1, title: "20% Off First Order", description: "New customers get 20% off", image: "/placeholder.svg" },
-  { id: 2, title: "Free Delivery", description: "Free delivery on orders over $50", image: "/placeholder.svg" },
-]
 
 const mockOrders: OrdersType = [
 
@@ -113,8 +108,8 @@ export default function Customer() {
   useEffect(() => {
     axios
       .get("/data/customers.json")
-      .then((response) => {
-        setCustomer(response.data.customers.find(customer => customer.id === id));
+      .then((response: { data: { customers: CustomerType[] } }) => {
+        setCustomer(response.data.customers.find(customer => customer.id === id) as CustomerType);
       })
       .catch((err) => {
         console.error(err);
@@ -134,7 +129,7 @@ export default function Customer() {
       })
       .catch((err) => {
         console.error(err);
-        setError("Failed to load offers");
+        setError("Failed to load orders");
       })
       .finally(() => {
         setLoading(false);
@@ -149,7 +144,7 @@ export default function Customer() {
       })
       .catch((err) => {
         console.error(err);
-        setError("Failed to load offers");
+        setError("Failed to load products");
       })
       .finally(() => {
         setLoading(false);

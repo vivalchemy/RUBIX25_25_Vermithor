@@ -51,18 +51,18 @@ export default function Search() {
     );
   }
 
-  const query = typeof searchParams.query === "string" ? searchParams.query : "";
+  const query = typeof searchParams.get("query") === "string" ? searchParams.get("query") : "";
 
   // Filter products based on search query and other filters
   const filteredProducts = products.filter(
     (product) =>
-      product.name.toLowerCase().includes(query.toLowerCase()) ||
-      product.vendor.toLowerCase().includes(query.toLowerCase())
+      product.name.toLowerCase().includes(query?.toLowerCase() as string) ||
+      product.vendor.toLowerCase().includes(query?.toLowerCase() as string)
   );
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SearchBar initialQuery={query} />
+      <SearchBar initialQuery={query as string} />
       <div className="mt-8 grid grid-cols-1 gap-8">
         <div className="mx-auto">
           <TopRecommendations products={filteredProducts.slice(0, 3)} />
