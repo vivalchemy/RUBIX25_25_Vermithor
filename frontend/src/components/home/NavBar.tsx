@@ -39,8 +39,25 @@ export default function NavBar() {
     router.push("/");
   };
 
+  const handleDashboard = () => {
+    let role = localStorage.getItem("userRole");
+    let customerId = localStorage.getItem("customerId");
+    let vendorId = localStorage.getItem("vendorId");
+
+    if (role === "customer" && customerId) {
+      // Redirect to customer dashboard with customerId
+      router.push(`/customer/${customerId}`);
+    } else if (role === "vendor" && vendorId) {
+      // Redirect to vendor dashboard with vendorId
+      router.push(`/vendor/${vendorId}`);
+    } else {
+      // Handle cases where role or ID is missing
+      console.error("Invalid role or ID not found in localStorage.");
+    }
+  };
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 bg-white bg-opacity-0 backdrop-blur-sm shadow-md">
+    <nav className="fixed top-0 left-0 right-0 z-[9999] flex justify-between items-center p-4 bg-white bg-opacity-0 backdrop-blur-sm shadow-md">
       <Link href="/" className="text-2xl font-bold text-green-600">
         Foodie
       </Link>
@@ -51,9 +68,14 @@ export default function NavBar() {
             <Button variant="outline" onClick={() => router.push("/auth")}>Login</Button>
           </>
         ) : (
-          <Button variant="outline" onClick={handleLogout}>
-            Logout
-          </Button>
+          <>
+            <Button variant="outline" onClick={handleDashboard}>
+              Dashboard
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              Logout
+            </Button>
+          </>
         )}
       </div>
     </nav>

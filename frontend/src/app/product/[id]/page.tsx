@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { ProductType, ProductsType } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/home/NavBar';
+import { Textarea } from '@/components/ui/textarea';
 
 const arLinks: Record<string, string> = {
   "banana": "https://mywebar.com/p/Banana-ud",
@@ -26,6 +27,15 @@ function ProductPage() {
   const [arLinkOfProduct, setArLinkOfProduct] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showReviewSubmissionModal, setShowReviewSubmissionModal] = useState(false);
+
+  // New state for review submission
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    reviewText: '',
+  });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSubmissionError, setReviewSubmissionError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -58,6 +68,50 @@ function ProductPage() {
       console.log(arLink);
     }
   }, [products, PRODUCT_INDEX]);
+
+
+  // Review submission handler
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingReview(true);
+    setReviewSubmissionError(null);
+
+    if (!currentProduct) {
+      setReviewSubmissionError('No product selected');
+      setIsSubmittingReview(false);
+      return;
+    }
+
+    try {
+      const reviewData: Omit<ReviewType, 'reviewId' | 'customer' | 'vendor' | 'reviewDate'> = {
+        rating: newReview.rating,
+        reviewText: newReview.reviewText
+      };
+
+      const response = await fetch(`/api/review/${currentProduct.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit review');
+      }
+
+      // Reset form and potentially refresh reviews
+      setNewReview({ rating: 5, reviewText: '' });
+
+      // Optional: You might want to refetch the product to update reviews
+      // This would depend on your backend implementation
+    } catch (error) {
+      console.error('Review submission error:', error);
+      setReviewSubmissionError(error instanceof Error ? error.message : 'An unknown error occurred');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   if (isLoading || !currentProduct) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -180,11 +234,70 @@ function ProductPage() {
         {/* Reviews */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Customer Reviews</h2>
-            <Badge variant="secondary" className="text-sm px-3 py-1">
-              {currentProduct.rating} / 5
-            </Badge>
+            <div className="flex items-center">
+
+              <h2 className="text-xl font-semibold text-gray-900">Customer Reviews</h2>
+              <Badge variant="secondary" className="text-sm px-3 py-1">
+                {currentProduct.rating} / 5
+              </Badge>
+            </div>
+            <Button
+              variant="secondary"
+              className="text-sm"
+              onClick={() => setShowReviewSubmissionModal(prev => !prev)}
+            >
+              {showReviewSubmissionModal ? 'Cancel' : 'Write a Review'}
+            </Button>
           </div>
+
+
+          {/* Review Submission Form */}
+          {showReviewSubmissionModal && (
+            <form onSubmit={handleSubmitReview} className="mb-8 bg-white shadow-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                <div className="flex items-center space-x-2">
+                  {[1, 2, 3, 4, 5].map((starValue) => (
+                    <Star
+                      key={starValue}
+                      className={`h-6 w-6 cursor-pointer ${starValue <= newReview.rating
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-300'
+                        }`}
+                      onClick={() => setNewReview(prev => ({ ...prev, rating: starValue }))}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Review</label>
+                <Textarea
+                  value={newReview.reviewText}
+                  onChange={(e) => setNewReview(prev => ({ ...prev, reviewText: e.target.value }))}
+                  placeholder="Share your experience with this product"
+                  className="w-full"
+                  required
+                />
+              </div>
+
+              {reviewSubmissionError && (
+                <div className="text-red-500 text-sm mb-4">{reviewSubmissionError}</div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={isSubmittingReview}
+                className="w-full"
+              >
+                {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+              </Button>
+            </form>
+          )}
+
+          {/* Existing Reviews */}
           <div className="space-y-4 md:grid md:grid-cols-2 gap-6">
             {(currentProduct.reviews || []).map((review: any) => (
               <Card key={review.id} className="hover:shadow-sm transition-shadow duration-300">
