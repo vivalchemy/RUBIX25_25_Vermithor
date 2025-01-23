@@ -9,6 +9,7 @@ import type { CustomerType, OrdersType, ProductsType } from "@/lib/types"
 import axios from "axios"
 import { Loader2 } from "lucide-react"
 import { useParams } from "next/navigation"
+import NavBar from "@/components/home/NavBar"
 
 // Mock data (replace with actual data fetching in a real application)
 const mockCustomer: CustomerType = {
@@ -185,20 +186,23 @@ export default function Customer() {
   }
 
   return (
-    <div className="container mx-auto mt-24 grid gap-6 md:grid-cols-3">
-      <div className="md:col-span-1 lg:col-span-1">
-        <Details customer={customer} onUpdate={handleCustomerUpdate} />
+    <>
+      <NavBar />
+      <div className="container mx-auto mt-24 grid gap-6 md:grid-cols-3">
+        <div className="md:col-span-1 lg:col-span-1">
+          <Details customer={customer} onUpdate={handleCustomerUpdate} />
+        </div>
+        <div className="md:col-span-2 lg:col-span-2">
+          <RecentOrders orders={pendingOrders} products={products} />
+        </div>
+        <div className="md:col-span-2 lg:col-span-3">
+          <Offers />
+        </div>
+        <div className="md:col-span-2 lg:col-span-3">
+          <PurchaseHistory orders={orders} products={products} />
+        </div>
       </div>
-      <div className="md:col-span-2 lg:col-span-2">
-        <RecentOrders orders={pendingOrders} products={products} />
-      </div>
-      <div className="md:col-span-2 lg:col-span-3">
-        <Offers />
-      </div>
-      <div className="md:col-span-2 lg:col-span-3">
-        <PurchaseHistory orders={orders} products={products} />
-      </div>
-    </div>
+    </>
   )
 }
 

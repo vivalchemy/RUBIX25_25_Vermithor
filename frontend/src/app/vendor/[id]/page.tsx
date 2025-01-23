@@ -6,6 +6,7 @@ import TotalEarnings from "./TotalEarnings"
 import DishList from "./DishList"
 import axios from "axios"
 import { Loader2 } from "lucide-react"
+import NavBar from "@/components/home/NavBar"
 
 export interface VendorType {
   name: string
@@ -71,15 +72,18 @@ export default function VendorDashboard() {
     );
   }
   return (
+    <>
+      <NavBar />
 
-    <div className="mt-24 container mx-auto px-4 space-y-6">
-      <VendorHeader name={vendor?.name as string} rating={vendor?.rating as number} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <BestDish dish={vendor?.bestDish as BestDishType} />
-        <TotalEarnings amount={vendor?.totalEarnings as number} />
+      <div className="mt-24 container mx-auto px-4 space-y-6">
+        <VendorHeader name={vendor?.name as string} rating={vendor?.rating as number} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <BestDish dish={vendor?.bestDish as BestDishType} />
+          <TotalEarnings amount={vendor?.totalEarnings as number} />
+        </div>
+        <DishList dishes={vendor?.dishes as DishType[]} filter={filter} setFilter={setFilter} />
       </div>
-      <DishList dishes={vendor?.dishes as DishType[]} filter={filter} setFilter={setFilter} />
-    </div>
+    </>
   )
 }
 

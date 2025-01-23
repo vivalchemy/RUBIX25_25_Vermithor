@@ -8,6 +8,7 @@ import { ProductsType } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { ProductList } from "@/components/search/ProductList";
+import NavBar from "@/components/home/NavBar";
 
 export default function Search() {
   let searchParams = useSearchParams();
@@ -61,18 +62,21 @@ export default function Search() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <SearchBar initialQuery={query as string} />
-      <div className="mt-8 grid grid-cols-1 gap-8">
-        <div className="mx-auto">
-          <TopRecommendations products={filteredProducts.slice(0, 3)} />
-        </div>
-        <Map products={filteredProducts} />
-        <div>
-          <ProductList products={filteredProducts} itemsPerPage={14} />
+    <>
+      <NavBar />
+      <div className="container mx-auto px-4 py-8">
+        <SearchBar initialQuery={query as string} />
+        <div className="mt-8 grid grid-cols-1 gap-8">
+          <div className="mx-auto">
+            <TopRecommendations products={filteredProducts.slice(0, 3)} />
+          </div>
+          <Map products={filteredProducts} />
+          <div>
+            <ProductList products={filteredProducts} itemsPerPage={14} />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
