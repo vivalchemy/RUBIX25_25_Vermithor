@@ -1,63 +1,64 @@
-"use client"
+import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { ProductType } from '@/lib/types';
-import { ReviewType } from '@/lib/types/Reset';
 import axios from 'axios';
 import { PencilIcon, Star, X } from 'lucide-react';
-import { useState } from 'react'
 
-function Reviews({ product }: { product: ProductType }) {
+function Reviews({ productId }: { productId: string }) {
   const [showReviewSubmissionModal, setShowReviewSubmissionModal] = useState(false);
-
-  // New state for review submission
   const [newReview, setNewReview] = useState({
     rating: 5,
     reviewText: '',
   });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewSubmissionError, setReviewSubmissionError] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
 
+  // Retrieve reviews from localStorage
+  useEffect(() => {
+    const storedReviews = localStorage.getItem(`reviews_${productId}`);
+    if (storedReviews) {
+      setReviews(JSON.parse(storedReviews));
+    }
+  }, [productId]);
 
-  // Review submission handler
+  // Save reviews to localStorage
+  const saveReviewsToLocalStorage = (updatedReviews: any[]) => {
+    localStorage.setItem(`reviews_${productId}`, JSON.stringify(updatedReviews));
+    setReviews(updatedReviews);
+  };
+
+  // Submit a new review to the backend and save to localStorage
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingReview(true);
     setReviewSubmissionError(null);
 
-    if (!product) {
-      setReviewSubmissionError('No product selected');
-      setIsSubmittingReview(false);
-      return;
-    }
-
     try {
-      const reviewData: Omit<ReviewType, 'reviewId' | 'customer' | 'vendor' | 'reviewDate'> = {
+      const reviewData = {
         rating: newReview.rating,
-        reviewText: newReview.reviewText,
+        reviews: [newReview.reviewText],
       };
 
-      const response = await axios.post(`/api/review/${product.id}`, reviewData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      // Send the review to the backend
+      const response = await axios.post(`http://127.0.0.1:8000/analyze_reviews/`, reviewData, {
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      // Reset form and potentially refresh reviews
-      setNewReview({ rating: 5, reviewText: '' });
+      // Update localStorage with the backend response
+      const newReviewEntry = response.data.results[0];
+      const newRevisedEntryWithRating = { ...newReviewEntry, rating: newReview.rating };
+      const updatedReviews = [...reviews, newRevisedEntryWithRating];
+      saveReviewsToLocalStorage(updatedReviews);
 
-      // Optional: You might want to refetch the product to update reviews
-      // This would depend on your backend implementation
+      // Reset the form
+      setNewReview({ rating: 5, reviewText: '' });
+      setShowReviewSubmissionModal(false);
     } catch (error) {
       console.error('Review submission error:', error);
-
-      setReviewSubmissionError(
-        axios.isAxiosError(error)
-          ? error.response?.data?.message || 'Failed to submit review'
-          : 'An unknown error occurred'
-      );
+      setReviewSubmissionError('Failed to submit review. Please try again.');
     } finally {
       setIsSubmittingReview(false);
     }
@@ -67,92 +68,76 @@ function Reviews({ product }: { product: ProductType }) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-
           <h2 className="text-xl font-semibold text-gray-900">Customer Reviews</h2>
           <Badge variant="secondary" className="text-sm px-3 py-1">
-            {product.rating} / 5
+            {reviews.length} Reviews
           </Badge>
         </div>
         <Button
           variant="outline"
           className="text-sm"
-          onClick={() => setShowReviewSubmissionModal(prev => !prev)}
+          onClick={() => setShowReviewSubmissionModal((prev) => !prev)}
         >
-
           {!showReviewSubmissionModal ? <PencilIcon className="h-5 w-5" /> : <X className="h-5 w-5" />}
           {showReviewSubmissionModal ? 'Cancel' : 'Write a Review'}
         </Button>
       </div>
 
+      {/* Existing Reviews */}
+      <div className="space-y-4 md:grid md:grid-cols-2 gap-6 mb-6">
+        {reviews.map((review, index) => (
+          <Card key={index} className="hover:shadow-sm transition-shadow duration-300">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <Badge variant="secondary">{review.gemini_suggestion}</Badge>
+                  <p className="text-sm text-gray-900 font-medium">{review.review}</p>
+                  <p className="text-xs text-gray-500 mt-1">Rating: {review.rating}</p>
+                  <p className="text-xs text-gray-500 mt-1">Sentiment: {review.sentiment}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {/* Review Submission Form */}
       {showReviewSubmissionModal && (
         <form onSubmit={handleSubmitReview} className="mb-8 bg-white shadow-sm rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
-
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
             <div className="flex items-center space-x-2">
               {[1, 2, 3, 4, 5].map((starValue) => (
                 <Star
                   key={starValue}
-                  className={`h-6 w-6 cursor-pointer ${starValue <= newReview.rating
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-gray-300'
+                  className={`h-6 w-6 cursor-pointer ${starValue <= newReview.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
                     }`}
-                  onClick={() => setNewReview(prev => ({ ...prev, rating: starValue }))}
+                  onClick={() => setNewReview((prev) => ({ ...prev, rating: starValue }))}
                 />
               ))}
             </div>
           </div>
-
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Review</label>
             <Textarea
               value={newReview.reviewText}
-              onChange={(e) => setNewReview(prev => ({ ...prev, reviewText: e.target.value }))}
+              onChange={(e) => setNewReview((prev) => ({ ...prev, reviewText: e.target.value }))}
               placeholder="Share your experience with this product"
               className="w-full"
               required
             />
           </div>
-
           {reviewSubmissionError && (
             <div className="text-red-500 text-sm mb-4">{reviewSubmissionError}</div>
           )}
-
-          <Button
-            type="submit"
-            disabled={isSubmittingReview}
-            className="w-full"
-          >
+          <Button type="submit" disabled={isSubmittingReview} className="w-full">
             {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
           </Button>
         </form>
       )}
-
-      {/* Existing Reviews */}
-      <div className="space-y-4 md:grid md:grid-cols-2 gap-6">
-        {(product.reviews || []).map((review: any) => (
-          <Card key={review.id} className="hover:shadow-sm transition-shadow duration-300">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <span className="font-medium text-base text-gray-900">{review.user}</span>
-                  <p className="text-xs text-gray-500 mt-0.5">{review.date}</p>
-                </div>
-                <div className="flex items-center bg-gray-50 px-2 py-0.5 rounded-full">
-                  <Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
-                  <span className="ml-1 text-sm font-medium">{review.rating}</span>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed">{review.comment}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
     </div>
-  )
+  );
 }
 
-export default Reviews
+export default Reviews;

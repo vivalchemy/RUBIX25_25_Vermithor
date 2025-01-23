@@ -4,10 +4,19 @@ from pydantic import BaseModel
 from huggingface_hub import login
 from transformers import pipeline
 import google.generativeai as genai
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
 # Initialize FastAPI
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (you can restrict this to specific domains)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 # Login to Hugging Face using your API token
 login(token="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")
