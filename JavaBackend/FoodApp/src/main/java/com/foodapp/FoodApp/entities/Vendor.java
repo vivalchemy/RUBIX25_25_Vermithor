@@ -15,18 +15,19 @@ public class Vendor {
   private Long vendorId;
 
   private String name;
+  private String email;
+  private String password;
   private String address;
   private String shopName;
   private String location;
-  private Double rating;
+  private Double rating = 0.0;
+  private String imageUrl;
 
   @JsonIgnore
-  @JsonManagedReference(value = "vendor-order18")
   @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
   private List<Order> orders;
 
   @JsonIgnore
-  @JsonManagedReference(value = "vendor-order16")
   @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
   private List<Review> reviews;
 }
