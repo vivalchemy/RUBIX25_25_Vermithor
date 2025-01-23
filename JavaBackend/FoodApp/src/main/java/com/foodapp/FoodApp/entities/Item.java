@@ -15,6 +15,7 @@ public class Item {
     private String name;
     private Double price;
     private Category category;  //  DRAFTED,ARCHIVED,READY
+    private Double rating;
 
     @JsonIgnore
     @ManyToOne

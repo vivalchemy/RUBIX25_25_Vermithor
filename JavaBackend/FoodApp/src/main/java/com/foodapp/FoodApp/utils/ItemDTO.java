@@ -8,4 +8,5 @@ public class ItemDTO {
     private Double price;
     private Category category;
     private Long vendorId;
+    private Double rating;
 }

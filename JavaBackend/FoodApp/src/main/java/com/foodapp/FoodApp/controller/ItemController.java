@@ -31,6 +31,7 @@ public class ItemController {
         createdItem.setName(ItemDto.getName());
         createdItem.setPrice(ItemDto.getPrice());
         createdItem.setCategory(ItemDto.getCategory());
+        createdItem.setRating(ItemDto.getRating());
         createdItem.setVendor(vendorRepository.findById(ItemDto.getVendorId()).orElseThrow(() -> new RuntimeException("Customer not found")));
         Item mainItem = itemService.createItem(createdItem);
         return new ResponseEntity<>(mainItem, HttpStatus.CREATED);
