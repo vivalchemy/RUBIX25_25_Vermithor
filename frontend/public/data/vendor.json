@@ -1,0 +1,36 @@
+{
+  "name": "Tasty Bites",
+  "rating": 4.5,
+  "totalEarnings": 15000,
+  "bestDish": {
+    "name": "Spicy Chicken Burger",
+    "rating": 4.8,
+    "image": "/products/honey.avif"
+  },
+  "dishes": [
+    {
+      "id": 1,
+      "name": "Spicy Chicken Burger",
+      "status": "listed",
+      "rating": 4.8
+    },
+    {
+      "id": 2,
+      "name": "Vegetarian Pizza",
+      "status": "listed",
+      "rating": 4.5
+    },
+    {
+      "id": 3,
+      "name": "Chocolate Brownie",
+      "status": "draft",
+      "rating": 0
+    },
+    {
+      "id": 4,
+      "name": "Caesar Salad",
+      "status": "archived",
+      "rating": 4.2
+    }
+  ]
+}
