@@ -12,11 +12,12 @@ import { useParams } from "next/navigation"
 
 // Mock data (replace with actual data fetching in a real application)
 const mockCustomer: CustomerType = {
-  id: "1",
+  customerId: "1",
   name: "John Doe",
   email: "john@example.com",
-  phoneNumber: "+1 234 567 8900",
+  phone: "+1 234 567 8900",
   location: "New York, NY",
+  address: "123 Main St, New York, NY 10001",
 }
 
 const mockOrders: OrdersType = [
@@ -107,13 +108,14 @@ export default function Customer() {
 
   useEffect(() => {
     axios
-      .get("/data/customers.json")
-      .then((response: { data: { customers: CustomerType[] } }) => {
-        setCustomer(response.data.customers.find(customer => customer.id === id) as CustomerType);
+      .get(`/api/customers/${id}`)
+      .then((response) => {
+        //setCustomer(response.data.customers.find(customer => customer.id === id) as CustomerType);
+        setCustomer(response.data);
       })
       .catch((err) => {
         console.error(err);
-        setError("Failed to load offers");
+        setError("Failed to load customer data");
       })
       .finally(() => {
         setLoading(false);
