@@ -1,5 +1,7 @@
 package com.foodapp.FoodApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.foodapp.FoodApp.utils.Category;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,5 +14,10 @@ public class Item {
 
     private String name;
     private Double price;
-    private String category;
+    private Category category;  //  DRAFTED,ARCHIVED,READY
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="vendor_id",nullable = false)
+    private Vendor vendor;
 }
