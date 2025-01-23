@@ -3,12 +3,14 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Users, Heart, ShoppingCart, Rotate3d } from 'lucide-react';
+import { Star, Clock, Users, Heart, ShoppingCart, Rotate3d, PencilIcon, ChevronLeftIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ProductType, ProductsType } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/home/NavBar';
 import { Textarea } from '@/components/ui/textarea';
+import { ReviewType } from '@/lib/types/Reset';
+import axios from 'axios';
 
 const arLinks: Record<string, string> = {
   "banana": "https://mywebar.com/p/Banana-ud",
@@ -85,20 +87,14 @@ function ProductPage() {
     try {
       const reviewData: Omit<ReviewType, 'reviewId' | 'customer' | 'vendor' | 'reviewDate'> = {
         rating: newReview.rating,
-        reviewText: newReview.reviewText
+        reviewText: newReview.reviewText,
       };
 
-      const response = await fetch(`/api/review/${currentProduct.id}`, {
-        method: 'POST',
+      const response = await axios.post(`/api/review/${currentProduct.id}`, reviewData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(reviewData)
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit review');
-      }
 
       // Reset form and potentially refresh reviews
       setNewReview({ rating: 5, reviewText: '' });
@@ -107,7 +103,12 @@ function ProductPage() {
       // This would depend on your backend implementation
     } catch (error) {
       console.error('Review submission error:', error);
-      setReviewSubmissionError(error instanceof Error ? error.message : 'An unknown error occurred');
+
+      setReviewSubmissionError(
+        axios.isAxiosError(error)
+          ? error.response?.data?.message || 'Failed to submit review'
+          : 'An unknown error occurred'
+      );
     } finally {
       setIsSubmittingReview(false);
     }
@@ -130,6 +131,8 @@ function ProductPage() {
     <>
       <NavBar />
       <div className="mt-16 max-w-5xl mx-auto p-6 bg-gradient-to-b from-gray-50 to-white min-h-screen">
+        <Button className='mb-2'><ChevronLeftIcon className="h-5 w-5"
+          onClick={() => router.back()} /> Back</Button>
         {/* Main Product Section */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {/* Product Image */}
@@ -242,10 +245,11 @@ function ProductPage() {
               </Badge>
             </div>
             <Button
-              variant="secondary"
+              variant="outline"
               className="text-sm"
               onClick={() => setShowReviewSubmissionModal(prev => !prev)}
             >
+              <PencilIcon className="h-5 w-5" />
               {showReviewSubmissionModal ? 'Cancel' : 'Write a Review'}
             </Button>
           </div>
