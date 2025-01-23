@@ -1,6 +1,7 @@
 package com.foodapp.FoodApp.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,10 +20,12 @@ public class Vendor {
   private String location;
   private Double rating;
 
+  @JsonIgnore
   @JsonManagedReference(value = "vendor-order18")
   @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
   private List<Order> orders;
 
+  @JsonIgnore
   @JsonManagedReference(value = "vendor-order16")
   @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
   private List<Review> reviews;
