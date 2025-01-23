@@ -1,20 +1,14 @@
 "use client";
 import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Users, Heart, ShoppingCart, Rotate3d, PencilIcon, ChevronLeftIcon, X } from 'lucide-react';
+import { ChevronLeftIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ProductType, ProductsType } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/home/NavBar';
-import { Textarea } from '@/components/ui/textarea';
-import { ReviewType } from '@/lib/types/Reset';
-import axios from 'axios';
 import Reviews from './Reviews';
 import RelatedProducts from './RelatedProducts';
 import ProductDetails from './ProductDetails';
-import ProductImage from './ProductImage';
 
 const arLinks: Record<string, string> = {
   "banana": "https://mywebar.com/p/Banana-ud",
@@ -68,7 +62,22 @@ function ProductPage() {
   ].filter(Boolean);
 
   function handleAddToCart(product: ProductType) {
-    console.log('Add to cart', product);
+    const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+    // Check if the product already exists in the cart
+    const existingProductIndex = cart.findIndex(item => item.id === product.id);
+
+    if (existingProductIndex >= 0) {
+      // If product already exists in cart, just update the quantity
+      cart[existingProductIndex].quantity += 1;
+    } else {
+      // Otherwise, add the product with quantity 1
+      const productWithQuantity = { ...product, quantity: 1 };
+      cart.push(productWithQuantity);
+    }
+
+    // Save the updated cart back to localStorage
+    localStorage.setItem('cartItems', JSON.stringify(cart));
   }
 
   if (isLoading || !currentProduct) {
