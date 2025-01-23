@@ -3,7 +3,7 @@ services:
     image: mysql:latest
     container_name: foodie_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: BADAL159
     volumes:
       - ./mysql-data:/var/lib/mysql
     ports:
