@@ -1,19 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import "leaflet/dist/leaflet.css";
-import L from 'leaflet';
+import L from "leaflet";
 
 // Dynamically import React Leaflet components to avoid SSR issues
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Polyline = dynamic(() => import("react-leaflet").then((mod) => mod.Polyline), { ssr: false });
-
-const DEFAULT_CENTER: [number, number] = [19.0760, 72.8777]
-const DEFAULT_ZOOM = 10;
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -24,6 +21,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function Map() {
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
@@ -31,6 +29,23 @@ export default function Map() {
   const [waypoints, setWaypoints] = useState<[number, number][]>([]);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  // Get user's current location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+        },
+        (error) => {
+          console.error("Error fetching user location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   const fetchSuggestions = async (query: string) => {
     if (!query) {
@@ -170,10 +185,10 @@ export default function Map() {
         </button>
       </div>
 
-      <div className="h-[400px] w-[600px] mx-auto relative mb-8">
+      <div className="h-[400px] w-full mx-auto relative mb-8">
         <MapContainer
-          center={DEFAULT_CENTER}
-          zoom={DEFAULT_ZOOM}
+          center={userLocation || [19.0760, 72.8777]}
+          zoom={10}
           style={{ height: "100%", width: "100%" }}
           className="rounded-lg"
         >
@@ -181,6 +196,7 @@ export default function Map() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+          {userLocation && <Marker position={userLocation} />}
           {originCoords && <Marker position={originCoords} />}
           {destinationCoords && <Marker position={destinationCoords} />}
           {waypoints.length > 1 && (
@@ -192,7 +208,6 @@ export default function Map() {
             </>
           )}
         </MapContainer>
-
       </div>
     </div>
   );
