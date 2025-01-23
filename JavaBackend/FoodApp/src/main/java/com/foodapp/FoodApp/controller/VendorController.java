@@ -30,7 +30,7 @@ public class VendorController {
   private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   @PostMapping("/login")
-  public ResponseEntity<String> loginVendor(@RequestBody VendorRequest vendorRequest) {
+  public ResponseEntity<?> loginVendor(@RequestBody VendorRequest vendorRequest) {
     Vendor vendor = vendorRepo.findByName(vendorRequest.getUsername());
 
     if (vendor == null) {
@@ -38,7 +38,7 @@ public class VendorController {
     }
 
     if (passwordEncoder.matches(vendorRequest.getPassword(), vendor.getPassword())) {
-      return ResponseEntity.ok("Login successful");
+      return ResponseEntity.ok(vendor);
     } else {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
     }

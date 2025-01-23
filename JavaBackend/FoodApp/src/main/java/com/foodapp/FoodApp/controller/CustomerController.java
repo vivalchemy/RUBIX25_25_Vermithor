@@ -41,7 +41,7 @@ public class CustomerController {
 
     // Login
     @PostMapping("/login")
-    public ResponseEntity<String> loginCustomer(@RequestBody UserRequest userRequest){
+    public ResponseEntity<?> loginCustomer(@RequestBody UserRequest userRequest){
         Customer customer = customerRepo.findByName(userRequest.getUsername());
 
         if (customer == null) {
@@ -49,7 +49,7 @@ public class CustomerController {
         }
 
         if (passwordEncoder.matches(userRequest.getPassword(), customer.getPassword())) {
-            return ResponseEntity.ok("Login successful");
+            return ResponseEntity.ok(customer);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
