@@ -22,7 +22,7 @@ public class Customer {
     private String email;
     private String phone;
     private String address;
-    private String location;
+    private double[] location;
     private String password;
     
     @JsonIgnore

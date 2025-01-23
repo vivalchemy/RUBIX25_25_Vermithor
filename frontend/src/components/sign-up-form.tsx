@@ -10,6 +10,16 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"; // Import Popover
 import { useRouter } from 'next/navigation';
 
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+  address: string;
+  phone: string;
+  shopName: string;
+  location: [number, number] | null;
+};
+
 export function SignUpForm({
   className,
   setLoginState,
@@ -21,6 +31,7 @@ export function SignUpForm({
     name: '',
     email: '',
     password: '',
+    location: null,
     address: '',
     phone: '',
     shopName: '',
@@ -65,7 +76,7 @@ export function SignUpForm({
       });
       const result = response.data.results[0];
       const coords: [number, number] = [result.geometry.lat, result.geometry.lng];
-      setFormData({ ...formData, address: location });
+      setFormData({ ...formData, address: location, location: coords });
     } catch (error) {
       console.error("Error fetching location coordinates:", error);
     }
@@ -86,7 +97,8 @@ export function SignUpForm({
           email: formData.email,
           password: formData.password,
           address: formData.address,
-          phone: formData.phone
+          phone: formData.phone,
+          location: formData.location
         }
         : {
           name: formData.name,
@@ -94,6 +106,7 @@ export function SignUpForm({
           password: formData.password,
           address: formData.address,
           shopName: formData.shopName,
+          location: formData.location
         };
 
       const response = await axios.post(url, payload);
@@ -113,7 +126,8 @@ export function SignUpForm({
           password: '',
           address: '',
           phone: '',
-          shopName: ''
+          shopName: '', 
+          location: null
         });
 
         toast.success(`Registered as ${role}`);

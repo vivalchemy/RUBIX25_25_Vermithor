@@ -18,11 +18,11 @@ public class Vendor {
     @Column(unique = true,nullable = false)
     @NaturalId
     private String name;
-    
+    private String email;
     private String address;
     private String shopName;
-    private String location;
-    private Double rating;
+    private double[] location;
+    private Double rating = 0.0;
     private String password;
     @JsonIgnore
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
