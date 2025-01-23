@@ -9,20 +9,20 @@ import java.util.List;
 @Entity
 @Data
 public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long customerId;
 
-    private String name;
-    private String email;
-    private String phone;
-    private String address;
-    private String location;
-    private String password;
-    @JsonBackReference(value = "vendor-order12")
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Order> orders;
-    @JsonBackReference(value = "vendor-order13")
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Review> reviews;
+  private String name;
+  private String email;
+  private String phone;
+  private String address;
+  private String location;
+  private String password;
+  @JsonManagedReference(value = "vendor-order12")
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+  private List<Order> orders;
+  @JsonManagedReference(value = "vendor-order13")
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+  private List<Review> reviews;
 }

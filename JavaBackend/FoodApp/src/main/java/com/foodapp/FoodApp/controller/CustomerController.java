@@ -1,4 +1,4 @@
-package com.foodapp.FoodApp.controllers;
+package com.foodapp.FoodApp.controller;
 
 import com.foodapp.FoodApp.entities.Customer;
 import com.foodapp.FoodApp.entities.Order;
@@ -14,10 +14,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
-
+    @Autowired
     private final CustomerService customerService;
 
-    @Autowired
+    
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
