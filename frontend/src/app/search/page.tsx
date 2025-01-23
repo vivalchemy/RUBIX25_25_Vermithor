@@ -64,10 +64,10 @@ export default function Search() {
     <div className="container mx-auto px-4 py-8">
       <SearchBar initialQuery={query} />
       <div className="mt-8 grid grid-cols-1 gap-8">
-        <div>
+        <div className="mx-auto">
           <TopRecommendations products={filteredProducts.slice(0, 3)} />
-          <Map products={filteredProducts} />
         </div>
+        <Map products={filteredProducts} />
         <div>
           <ProductList products={filteredProducts} itemsPerPage={14} />
         </div>
