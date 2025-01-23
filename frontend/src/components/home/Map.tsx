@@ -29,6 +29,7 @@ export default function Map() {
   const [waypoints, setWaypoints] = useState<[number, number][]>([]);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [vendors, setVendors] = useState<{ location_lat: number; location_lon: number; name: string }[]>([]);
 
   // Get user's current location
   useEffect(() => {
@@ -45,6 +46,18 @@ export default function Map() {
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
+
+    // Fetch vendors
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/vendors");
+        setVendors(response.data); // Assuming the response contains an array of vendors
+      } catch (error) {
+        console.error("Error fetching vendors:", error);
+      }
+    };
+
+    fetchVendors();
   }, []);
 
   const fetchSuggestions = async (query: string) => {
@@ -118,6 +131,17 @@ export default function Map() {
     }
     setLoading(false);
   };
+
+  // Define a constant icon color for all vendor markers
+  const vendorIcon = new L.Icon({
+    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    shadowSize: [41, 41],
+    iconColor: "#FF5733", // Color set for all vendors (change this to any desired color)
+  });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -207,6 +231,16 @@ export default function Map() {
               ))}
             </>
           )}
+          {/* All vendor locations with the same color */}
+          {vendors.map((vendor, index) => (
+            <Marker
+              key={index}
+              position={[vendor.location_lat, vendor.location_lon]}
+              icon={vendorIcon} // Apply same icon for all vendors
+            >
+              <div>{vendor.name}</div> {/* Display vendor name if necessary */}
+            </Marker>
+          ))}
         </MapContainer>
       </div>
     </div>
