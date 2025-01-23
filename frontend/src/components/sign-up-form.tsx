@@ -17,7 +17,8 @@ type FormData = {
   address: string;
   phone: string;
   shopName: string;
-  location: [number, number] | null;
+  location_lat: number;
+  location_lon: number;
 };
 
 export function SignUpForm({
@@ -31,7 +32,8 @@ export function SignUpForm({
     name: '',
     email: '',
     password: '',
-    location: null,
+    location_lat: 0,
+    location_lon: 0,
     address: '',
     phone: '',
     shopName: '',
@@ -76,7 +78,7 @@ export function SignUpForm({
       });
       const result = response.data.results[0];
       const coords: [number, number] = [result.geometry.lat, result.geometry.lng];
-      setFormData({ ...formData, address: location, location: coords });
+      setFormData({ ...formData, address: location, location_lat: coords[0], location_lon: coords[1] });
     } catch (error) {
       console.error("Error fetching location coordinates:", error);
     }
@@ -98,7 +100,8 @@ export function SignUpForm({
           password: formData.password,
           address: formData.address,
           phone: formData.phone,
-          location: formData.location
+          location_lat: formData.location_lat,
+          location_lon: formData.location_lon
         }
         : {
           name: formData.name,
@@ -106,7 +109,8 @@ export function SignUpForm({
           password: formData.password,
           address: formData.address,
           shopName: formData.shopName,
-          location: formData.location
+          location_lat: formData.location_lat,
+          location_lon: formData.location_lon
         };
 
       const response = await axios.post(url, payload);
@@ -127,7 +131,8 @@ export function SignUpForm({
           address: '',
           phone: '',
           shopName: '', 
-          location: null
+          location_lat: 0,
+          location_lon: 0
         });
 
         toast.success(`Registered as ${role}`);

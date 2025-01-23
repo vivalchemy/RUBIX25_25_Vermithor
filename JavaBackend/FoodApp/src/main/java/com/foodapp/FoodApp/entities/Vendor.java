@@ -21,7 +21,8 @@ public class Vendor {
     private String email;
     private String address;
     private String shopName;
-    private double[] location;
+    private double location_lat;
+    private double location_lon;
     private Double rating = 0.0;
     private String password;
     @JsonIgnore
