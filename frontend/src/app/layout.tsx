@@ -26,12 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${poppins.variable} ${jetBrainsMono.variable} antialiased`}
-      >
+      <body className={`${poppins.variable} ${jetBrainsMono.variable} antialiased`}>
         <NavBar />
         {children}
       </body>
     </html>
   );
 }
+//className={`${poppins.variable} ${jetBrainsMono.variable} antialiased`}

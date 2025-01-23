@@ -1,110 +1,128 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { Star } from "lucide-react"
+"use client";
 
-export default function RecentPurchaseList() {
-  const purchases = [
-    {
-      id: 1,
-      name: "Organic Apples",
-      vendor: "Green Farms",
-      price: 5.99,
-      rating: 4.5,
-      timeToArrive: "30 mins",
-      peopleRequired: 1,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      id: 2,
-      name: "Fresh Bread",
-      vendor: "Local Bakery",
-      price: 3.99,
-      rating: 4.8,
-      timeToArrive: "20 mins",
-      peopleRequired: 1,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      id: 3,
-      name: "Vegetable Box",
-      vendor: "Community Garden",
-      price: 15.99,
-      rating: 4.7,
-      timeToArrive: "45 mins",
-      peopleRequired: 2,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      id: 4,
-      name: "Free-range Eggs",
-      vendor: "Happy Hens Farm",
-      price: 4.99,
-      rating: 4.6,
-      timeToArrive: "35 mins",
-      peopleRequired: 1,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      id: 5,
-      name: "Organic Milk",
-      vendor: "Dairy Delight",
-      price: 3.49,
-      rating: 4.9,
-      timeToArrive: "25 mins",
-      peopleRequired: 1,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      id: 6,
-      name: "Artisan Cheese",
-      vendor: "Cheese Crafters",
-      price: 7.99,
-      rating: 4.7,
-      timeToArrive: "40 mins",
-      peopleRequired: 1,
-      image: "/placeholder.svg?height=200&width=200",
-    },
-  ]
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Star, Clock, Loader2 } from "lucide-react";
+import type { Products } from "@/lib/types";
+
+export default function RecentProducts() {
+  const [products, setProducts] = useState<Products>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    axios
+      .get("/data/products.json")
+      .then((response) => {
+        setProducts(response.data.products);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load recent products");
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] bg-gray-50">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+          <p className="text-gray-600 font-medium">Loading your recent products...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] bg-gray-50">
+        <div className="text-center space-y-4 max-w-md mx-auto p-6">
+          <div className="text-red-500 font-semibold text-lg">{error}</div>
+          <p className="text-gray-600">Please try again later or contact support if the problem persists.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section className="py-12 bg-gray-100">
-      <div className="container mx-auto">
-        <h2 className="text-3xl font-bold mb-8">Repeat Purchase</h2>
-        <Carousel className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-5xl mx-auto">
-          <CarouselContent>
-            {purchases.map((purchase) => (
-              <CarouselItem key={purchase.id} className="md:basis-1/2 lg:basis-1/3">
-                <Card className="overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={purchase.image || "/placeholder.svg"}
-                        alt={purchase.name}
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-12 scale-125"
-                      />
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4">
+        {/* Section Header */}
+        <div className="text-center mb-12 space-y-4">
+          <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight">
+            Recently Purchased
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Your favorite items are just a click away
+          </p>
+        </div>
+
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {products.slice(0, 6).map((product) => (
+            <Card
+              key={product.id}
+              className="overflow-hidden shadow-md rounded-xl transition-all duration-300 hover:shadow-xl group"
+            >
+              <CardContent className="p-0">
+                {/* Image Container */}
+                <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
+                  <img
+                    src={product.image || "/placeholder.svg"}
+                    alt={product.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* Rating Badge */}
+                  <div className="absolute top-3 left-3 flex items-center bg-white/90 backdrop-blur-sm px-2.5 py-1.5 rounded-full shadow-sm">
+                    <Star className="text-yellow-500 w-4 h-4" />
+                    <span className="ml-1.5 text-sm font-medium">{product.rating}</span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  {/* Primary Info */}
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-semibold text-xl text-gray-800 leading-tight group-hover:text-primary transition-colors">
+                        {product.name}
+                      </h3>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="shrink-0 shadow-sm hover:shadow transition-shadow"
+                      >
+                        Buy again
+                      </Button>
                     </div>
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg mb-1">{purchase.name}</h3>
-                      <p className="text-sm text-gray-500 mb-2">{purchase.vendor}</p>
-                      <p className="font-bold mb-2">${purchase.price}</p>
-                      <div className="flex items-center mb-2">
-                        <Star className="text-yellow-400 mr-1" />
-                        <span>{purchase.rating}</span>
-                      </div>
-                      <p className="text-sm">Arrives in: {purchase.timeToArrive}</p>
-                      <p className="text-sm">People required: {purchase.peopleRequired}</p>
+                    <p className="text-sm text-gray-600">{product.vendor}</p>
+                  </div>
+
+                  {/* Metadata */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center text-gray-700">
+                      <Clock className="w-4 h-4 mr-1.5 text-gray-500" />
+                      <span className="text-sm">
+                        Arrives in <span className="font-medium">{product.timeToArrive}</span>
+                      </span>
                     </div>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+                    <div className="text-sm text-gray-700">
+                      <span>Serves </span>
+                      <span className="font-medium">{product.peopleRequired}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
-  )
+  );
 }
-
-

@@ -1,4 +1,4 @@
-package com.foodapp.FoodApp.service;
+package com.foodapp.FoodApp.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -41,7 +41,10 @@ public class JwtService {
     public String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
     }
-
+    public String extractRoleFromToken(String token){
+        Claims claims = extractAllClaims(token);
+        return claims.get("roles",String.class);
+    }
     public Date extractExpiration(String token){
         return extractClaim(token,Claims::getExpiration);
     }
