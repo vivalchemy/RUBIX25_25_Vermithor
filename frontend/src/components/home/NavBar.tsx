@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 export default function NavBar() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [roleCheck, setRoleCheck] = useState('')
+  const [customerCheck, setCustomerCheck] = useState('')
+  const [vendorCheck, setVendorCheck] = useState('')
 
   useEffect(() => {
     // Ensure this runs only on client-side
@@ -15,6 +18,10 @@ export default function NavBar() {
       const role = localStorage.getItem("userRole");
       const customerId = localStorage.getItem("customerId");
       const vendorId = localStorage.getItem("vendorId");
+
+      setRoleCheck(role as string)
+      setVendorCheck(vendorId as string)
+      setCustomerCheck(customerId as string)
 
       setIsLoggedIn(!!(role || customerId || vendorId));
     };
@@ -62,6 +69,7 @@ export default function NavBar() {
         Foodie
       </Link>
       <div className="flex gap-2">
+        {roleCheck === "vendor" ? <Button onClick={() => router.push(`/vendor/${vendorCheck}/add`)}>Add Products</Button> : null}
         <Button variant="outline" onClick={() => router.push("/cart")}>
           Cart
         </Button>
