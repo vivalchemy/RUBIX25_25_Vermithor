@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"; // Import Popover
 import { useRouter } from 'next/navigation';
 
 export function SignUpForm({
@@ -24,12 +25,51 @@ export function SignUpForm({
     phone: '',
     shopName: '',
   });
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value
     });
+  };
+
+  const fetchSuggestions = async (query: string) => {
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get("https://api.opencagedata.com/geocode/v1/json", {
+        params: {
+          q: query,
+          key: process.env.NEXT_PUBLIC_GEOCODING_API,
+          limit: 5,
+        },
+      });
+      const results = response.data.results;
+      setSuggestions(results.map((result: any) => result.formatted));
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  };
+
+  const handleSelectLocation = async (location: string) => {
+    try {
+      const response = await axios.get("https://api.opencagedata.com/geocode/v1/json", {
+        params: {
+          q: location,
+          key: process.env.NEXT_PUBLIC_GEOCODING_API,
+        },
+      });
+      const result = response.data.results[0];
+      const coords: [number, number] = [result.geometry.lat, result.geometry.lng];
+      setFormData({ ...formData, address: location });
+    } catch (error) {
+      console.error("Error fetching location coordinates:", error);
+    }
+    setSuggestions([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,14 +161,34 @@ export function SignUpForm({
           </div>
           <div className="grid gap-2">
             <Label htmlFor="address">Shop Address</Label>
-            <Input
-              id="address"
-              type="text"
-              placeholder="Enter shop address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
+            <Popover>
+              <PopoverTrigger>
+                <Input
+                  id="address"
+                  type="text"
+                  placeholder="Enter shop address"
+                  value={formData.address}
+                  onChange={(e) => {
+                    handleChange(e);
+                    fetchSuggestions(e.target.value);
+                  }}
+                  required
+                />
+              </PopoverTrigger>
+              <PopoverContent className="max-h-60 overflow-auto w-full p-2">
+                <ul>
+                  {suggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleSelectLocation(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </PopoverContent>
+            </Popover>
           </div>
         </>
       )
@@ -179,14 +239,34 @@ export function SignUpForm({
           </div>
           <div className="grid gap-2">
             <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              type="text"
-              placeholder="Enter your address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
+            <Popover>
+              <PopoverTrigger>
+                <Input
+                  id="address"
+                  type="text"
+                  placeholder="Enter your address"
+                  value={formData.address}
+                  onChange={(e) => {
+                    handleChange(e);
+                    fetchSuggestions(e.target.value);
+                  }}
+                  required
+                />
+              </PopoverTrigger>
+              <PopoverContent className="max-h-60 overflow-auto w-full p-2">
+                <ul>
+                  {suggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleSelectLocation(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </PopoverContent>
+            </Popover>
           </div>
           {renderAdditionalFields()}
           <div className="grid gap-2">
