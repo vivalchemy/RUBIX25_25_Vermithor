@@ -62,6 +62,9 @@ export default function NavBar() {
         Foodie
       </Link>
       <div className="flex gap-2">
+        <Button variant="outline" onClick={() => router.push("/cart")}>
+          Cart
+        </Button>
         {!isLoggedIn ? (
           <>
             <Button onClick={() => router.push("/auth")}>Sign up</Button>
