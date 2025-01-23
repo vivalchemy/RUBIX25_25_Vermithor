@@ -1,15 +1,16 @@
 "use client"
-import { useEffect, useState } from 'react'
-import { SearchBar } from '@/components/search/SearchBar'
-import { Map } from '@/components/search/Map'
-import { ProductList } from '@/components/search/ProductList'
-import { TopRecommendations } from '@/components/search/TopRecommendation'
-import axios from 'axios'
-import { Products } from '@/lib/types'
-import { Loader2 } from 'lucide-react'
-import { EnhancedPagination } from '@/components/search/EnhancedPagination'
+import { useEffect, useState } from "react";
+import { SearchBar } from "@/components/search/SearchBar";
+import { Map } from "@/components/search/Map";
+import { TopRecommendations } from "@/components/search/TopRecommendation";
+import axios from "axios";
+import { Products } from "@/lib/types";
+import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ProductList } from "@/components/search/ProductList";
 
-export default function Search({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default function Search() {
+  let searchParams = useSearchParams();
   const [products, setProducts] = useState<Products>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,18 +51,14 @@ export default function Search({ searchParams }: { searchParams: { [key: string]
     );
   }
 
-  const query = typeof searchParams.query === 'string' ? searchParams.query : ''
-  const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page, 10) : 1
-  const itemsPerPage = 15
+  const query = typeof searchParams.query === "string" ? searchParams.query : "";
 
   // Filter products based on search query and other filters
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(query.toLowerCase()) ||
-    product.vendor.toLowerCase().includes(query.toLowerCase())
-  )
-
-  const paginatedProducts = filteredProducts.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+  const filteredProducts = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(query.toLowerCase()) ||
+      product.vendor.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -72,11 +69,10 @@ export default function Search({ searchParams }: { searchParams: { [key: string]
           <Map products={filteredProducts} />
         </div>
         <div>
-          <ProductList products={paginatedProducts} />
-          <EnhancedPagination currentPage={page} totalPages={totalPages} />
+          <ProductList products={filteredProducts} itemsPerPage={14} />
         </div>
       </div>
     </div>
-  )
+  );
 }
 

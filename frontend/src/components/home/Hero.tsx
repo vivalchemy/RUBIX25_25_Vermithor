@@ -17,12 +17,10 @@ export default function Hero() {
       <div className="relative z-10 bg-black bg-opacity-40 backdrop-blur-md p-8 rounded-lg max-w-3xl mx-auto shadow-lg">
         {/* Heading */}
         <h1 className="text-6xl font-extrabold mb-4 text-white leading-tight">
-          Discover <span className="text-green-400">Local Delights</span>
+          <span className="text-green-400">FOODIE</span>
         </h1>
         {/* Tagline */}
-        <p className="text-lg md:text-xl mb-8 text-gray-200">
-          Your favorite fresh and local food, delivered with care.
-        </p>
+        <p className="text-lg md:text-xl mb-8 text-gray-200">Optimizing local produce, Minimizing global waste</p>
         {/* Search Bar */}
         <div className="flex justify-center items-center">
           <Input

@@ -1,9 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Clock, Star } from "lucide-react"
 import Image from "next/image"
-import { Button } from "../ui/button"
 
-export function TopRecommendations({ products }: { products: any[] }) {
+import { Button } from "../ui/button"
+import { useRouter } from "next/navigation";
+import { Products } from "@/lib/types";
+
+export function TopRecommendations({ products }: { products: Products }) {
+  const router = useRouter();
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Top Recommendations</h2>
@@ -13,6 +17,7 @@ export function TopRecommendations({ products }: { products: any[] }) {
           <Card
             key={product.id}
             className="overflow-hidden shadow-md rounded-xl transition-all duration-300 hover:shadow-xl group"
+            onClick={() => router.push(`/product/${product.id}`)}
           >
             <CardContent className="p-0">
               {/* Image Container */}
@@ -40,11 +45,11 @@ export function TopRecommendations({ products }: { products: any[] }) {
                       {product.name}
                     </h3>
                     <Button
-                      variant="secondary"
+                      variant="default"
                       size="sm"
                       className="shrink-0 shadow-sm hover:shadow transition-shadow"
                     >
-                      Buy again
+                      $ {product.price.toFixed(2)}
                     </Button>
                   </div>
                   <p className="text-sm text-gray-600">{product.vendor}</p>
