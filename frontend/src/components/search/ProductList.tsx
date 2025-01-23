@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { EnhancedPagination } from "@/components/search/EnhancedPagination";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -19,7 +20,9 @@ interface Product {
   peopleRequired: number;
 }
 
+//TODO: go to line 61 and remove the - 1 from the product id
 export function ProductList({ products, itemsPerPage }: { products: Product[]; itemsPerPage: number }) {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
@@ -55,6 +58,7 @@ export function ProductList({ products, itemsPerPage }: { products: Product[]; i
           <Card
             key={product.id}
             className="group hover:shadow-lg transition-all duration-200 overflow-hidden"
+            onClick={() => router.push(`/product/${product.id - 1}`)}
           >
             <div className="sm:flex items-start p-4 gap-6">
               {/* Image Section */}
