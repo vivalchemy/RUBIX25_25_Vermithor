@@ -4,9 +4,9 @@ import Image from "next/image"
 
 import { Button } from "../ui/button"
 import { useRouter } from "next/navigation";
-import { Products } from "@/lib/types";
+import { ProductsType } from "@/lib/types";
 
-export function TopRecommendations({ products }: { products: Products }) {
+export function TopRecommendations({ products }: { products: ProductsType }) {
   const router = useRouter();
   return (
     <div className="space-y-4">

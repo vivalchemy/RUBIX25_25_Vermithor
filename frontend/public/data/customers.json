@@ -1,0 +1,144 @@
+{
+  "customers": [
+    {
+      "id": "1",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "phoneNumber": "555-1234",
+      "location": "New York, USA"
+    },
+    {
+      "id": "2",
+      "name": "Bob Smith",
+      "email": "bob.smith@example.com",
+      "phoneNumber": "555-5678",
+      "location": "Los Angeles, USA"
+    },
+    {
+      "id": "3",
+      "name": "Charlie Davis",
+      "email": "charlie.davis@example.com",
+      "phoneNumber": "555-8765",
+      "location": "Chicago, USA"
+    },
+    {
+      "id": "4",
+      "name": "Diana Torres",
+      "email": "diana.torres@example.com",
+      "phoneNumber": "555-4321",
+      "location": "Houston, USA"
+    },
+    {
+      "id": "5",
+      "name": "Ethan Brown",
+      "email": "ethan.brown@example.com",
+      "phoneNumber": "555-3412",
+      "location": "Phoenix, USA"
+    },
+    {
+      "id": "6",
+      "name": "Fiona Green",
+      "email": "fiona.green@example.com",
+      "phoneNumber": "555-7843",
+      "location": "San Diego, USA"
+    },
+    {
+      "id": "7",
+      "name": "George Martin",
+      "email": "george.martin@example.com",
+      "phoneNumber": "555-1256",
+      "location": "Austin, USA"
+    },
+    {
+      "id": "8",
+      "name": "Hannah Lee",
+      "email": "hannah.lee@example.com",
+      "phoneNumber": "555-7865",
+      "location": "San Francisco, USA"
+    },
+    {
+      "id": "9",
+      "name": "Isaac Wilson",
+      "email": "isaac.wilson@example.com",
+      "phoneNumber": "555-9087",
+      "location": "Seattle, USA"
+    },
+    {
+      "id": "10",
+      "name": "Julia Moore",
+      "email": "julia.moore@example.com",
+      "phoneNumber": "555-3416",
+      "location": "Denver, USA"
+    },
+    {
+      "id": "11",
+      "name": "Kevin Carter",
+      "email": "kevin.carter@example.com",
+      "phoneNumber": "555-8790",
+      "location": "Portland, USA"
+    },
+    {
+      "id": "12",
+      "name": "Liam White",
+      "email": "liam.white@example.com",
+      "phoneNumber": "555-5643",
+      "location": "Atlanta, USA"
+    },
+    {
+      "id": "13",
+      "name": "Mia Clark",
+      "email": "mia.clark@example.com",
+      "phoneNumber": "555-6734",
+      "location": "Miami, USA"
+    },
+    {
+      "id": "14",
+      "name": "Nathan Hall",
+      "email": "nathan.hall@example.com",
+      "phoneNumber": "555-2413",
+      "location": "Boston, USA"
+    },
+    {
+      "id": "15",
+      "name": "Olivia Young",
+      "email": "olivia.young@example.com",
+      "phoneNumber": "555-6874",
+      "location": "Dallas, USA"
+    },
+    {
+      "id": "16",
+      "name": "Paul Turner",
+      "email": "paul.turner@example.com",
+      "phoneNumber": "555-8321",
+      "location": "Las Vegas, USA"
+    },
+    {
+      "id": "17",
+      "name": "Quinn Edwards",
+      "email": "quinn.edwards@example.com",
+      "phoneNumber": "555-3948",
+      "location": "San Antonio, USA"
+    },
+    {
+      "id": "18",
+      "name": "Rachel Adams",
+      "email": "rachel.adams@example.com",
+      "phoneNumber": "555-7923",
+      "location": "Orlando, USA"
+    },
+    {
+      "id": "19",
+      "name": "Samuel Brooks",
+      "email": "samuel.brooks@example.com",
+      "phoneNumber": "555-5432",
+      "location": "Nashville, USA"
+    },
+    {
+      "id": "20",
+      "name": "Tina Baker",
+      "email": "tina.baker@example.com",
+      "phoneNumber": "555-8743",
+      "location": "Charlotte, USA"
+    }
+  ]
+}

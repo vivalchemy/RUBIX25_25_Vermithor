@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, Clock, Users, Heart, ShoppingCart, Rotate3d } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Product, Products } from '@/lib/types';
+import { ProductType, ProductsType } from '@/lib/types';
 import { useParams } from 'next/navigation';
 
 
 function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const PRODUCT_INDEX = parseInt(id as string, 10);
-  const [products, setProducts] = useState<Products>([]);
+  const [products, setProducts] = useState<ProductsType>([]);
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,7 +42,7 @@ function ProductPage() {
     products[PRODUCT_INDEX + 1]
   ].filter(Boolean);
 
-  function handleAddToCart(product: Product) {
+  function handleAddToCart(product: ProductType) {
     console.log('Add to cart', product);
   }
 

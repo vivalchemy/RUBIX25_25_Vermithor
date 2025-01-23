@@ -4,14 +4,14 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { Map } from "@/components/search/Map";
 import { TopRecommendations } from "@/components/search/TopRecommendation";
 import axios from "axios";
-import { Products } from "@/lib/types";
+import { ProductsType } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { ProductList } from "@/components/search/ProductList";
 
 export default function Search() {
   let searchParams = useSearchParams();
-  const [products, setProducts] = useState<Products>([]);
+  const [products, setProducts] = useState<ProductsType>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

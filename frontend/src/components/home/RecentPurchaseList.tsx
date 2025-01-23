@@ -5,10 +5,10 @@ import axios from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Clock, Loader2 } from "lucide-react";
-import type { Products } from "@/lib/types";
+import type { ProductsType } from "@/lib/types";
 
 export default function RecentProducts() {
-  const [products, setProducts] = useState<Products>([]);
+  const [products, setProducts] = useState<ProductsType>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

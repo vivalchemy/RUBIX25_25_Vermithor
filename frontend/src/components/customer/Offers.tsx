@@ -13,7 +13,7 @@ import {
 import { Loader2 } from "lucide-react";
 import type { OffersType } from "@/lib/types";
 
-export default function Offers() {
+export function Offers() {
   const [offers, setOffers] = useState<OffersType>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,15 +58,11 @@ export default function Offers() {
     <section>
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-12 space-y-4">
-          <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight mt-16">
+        <div className="text-center mb-8 space-y-2">
+          <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight mt-12">
             Offers You&apos;ll Love
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover exclusive deals and special offers tailored just for you
-          </p>
         </div>
-
         {/* Carousel */}
         <Carousel
           className="w-full max-w-6xl mx-auto relative group"
@@ -120,3 +116,4 @@ export default function Offers() {
     </section>
   );
 }
+
