@@ -6,14 +6,24 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Clock, Users, Heart, ShoppingCart, Rotate3d } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ProductType, ProductsType } from '@/lib/types';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/home/NavBar';
 
+const arLinks: Record<string, string> = {
+  "banana": "https://mywebar.com/p/Banana-ud",
+  "bread": "https://mywebar.com/p/Bread",
+  "eggs": "https://mywebar.com/p/Eggs",
+  "milk": "https://mywebar.com/p/milk",
+  "apple": "https://mywebar.com/p/apple-"
+};
 
 function ProductPage() {
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const PRODUCT_INDEX = parseInt(id as string, 10);
   const [products, setProducts] = useState<ProductsType>([]);
+  const [currentProduct, setCurrentProduct] = useState<ProductType | null>(null);
+  const [arLinkOfProduct, setArLinkOfProduct] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,9 +33,9 @@ function ProductPage() {
         const response = await fetch('/data/products.json');
         const data = await response.json();
         setProducts(data.products);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching products:', error);
-      } finally {
         setIsLoading(false);
       }
     };
@@ -33,11 +43,26 @@ function ProductPage() {
     fetchProducts();
   }, []);
 
-  if (isLoading || !products.length) {
+  useEffect(() => {
+    if (products.length > 0) {
+      const product = products[PRODUCT_INDEX];
+      setCurrentProduct(product);
+
+      // Find AR link
+      const arLink = product.name.toLowerCase().split(" ").reduce<string | null>((link, word) => {
+        if (link) return link;  // If link is already found, return it
+        return word in arLinks ? arLinks[word] : null; // Otherwise, check the current word
+      }, null);
+
+      setArLinkOfProduct(arLink || "");
+      console.log(arLink);
+    }
+  }, [products, PRODUCT_INDEX]);
+
+  if (isLoading || !currentProduct) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
-  const currentProduct = products[PRODUCT_INDEX];
   const relatedProducts = [
     products[PRODUCT_INDEX - 1],
     products[PRODUCT_INDEX + 1]
@@ -108,7 +133,10 @@ function ProductPage() {
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   Add to Cart
                 </Button>
-                <Button variant="outline" className="px-4">
+                <Button variant="outline" className="px-4"
+                  onClick={() => {
+                    router.push(`${arLinkOfProduct}`);
+                  }}>
                   <Rotate3d className="h-4 w-4" />
                   View in AR
                 </Button>
@@ -158,7 +186,7 @@ function ProductPage() {
             </Badge>
           </div>
           <div className="space-y-4 md:grid md:grid-cols-2 gap-6">
-            {(currentProduct.reviews || []).map((review) => (
+            {(currentProduct.reviews || []).map((review: any) => (
               <Card key={review.id} className="hover:shadow-sm transition-shadow duration-300">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-3">
@@ -180,6 +208,6 @@ function ProductPage() {
       </div>
     </>
   );
-};
+}
 
 export default ProductPage;

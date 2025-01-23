@@ -58,7 +58,7 @@ export interface Order {
 }
 
 // Review.ts
-export interface Review {
+export interface ReviewType {
   reviewId: number;
   customer: Customer;
   vendor: Vendor;
