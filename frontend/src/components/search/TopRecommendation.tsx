@@ -5,6 +5,7 @@ import { Button } from "../ui/button"
 import { useRouter } from "next/navigation";
 import { ProductsType } from "@/lib/types";
 
+// TODO: Remove - 1 from product id
 export function TopRecommendations({ products }: { products: ProductsType }) {
   const router = useRouter();
   return (
@@ -16,7 +17,7 @@ export function TopRecommendations({ products }: { products: ProductsType }) {
           <Card
             key={product.id}
             className="overflow-hidden shadow-md rounded-xl transition-all duration-300 hover:shadow-xl group"
-            onClick={() => router.push(`/product/${product.id}`)}
+            onClick={() => router.push(`/product/${product.id - 1}`)}
           >
             <CardContent className="p-0">
               {/* Image Container */}
