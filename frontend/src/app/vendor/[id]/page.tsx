@@ -72,7 +72,7 @@ export default function VendorDashboard() {
   }
   return (
 
-    <div className="container mx-auto px-4 space-y-6">
+    <div className="mt-24 container mx-auto px-4 space-y-6">
       <VendorHeader name={vendor?.name as string} rating={vendor?.rating as number} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <BestDish dish={vendor?.bestDish as BestDishType} />
