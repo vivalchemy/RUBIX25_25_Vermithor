@@ -1,7 +1,10 @@
 package com.foodapp.FoodApp.controller;
 
+import com.foodapp.FoodApp.Repo.VendorRepo;
 import com.foodapp.FoodApp.entities.Item;
 import com.foodapp.FoodApp.services.ItemService;
+import com.foodapp.FoodApp.utils.ItemDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,17 +13,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/items")
 public class ItemController {
 
     @Autowired
     private ItemService itemService;
 
+    @Autowired
+    private VendorRepo vendorRepository;
+
     // Create a new Item
     @PostMapping
-    public ResponseEntity<Item> createItem(@RequestBody Item item) {
-        Item createdItem = itemService.createItem(item);
-        return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
+    public ResponseEntity<Item> createItem(@RequestBody ItemDTO ItemDto) {
+
+        Item createdItem = new Item();
+        createdItem.setName(ItemDto.getName());
+        createdItem.setPrice(ItemDto.getPrice());
+        createdItem.setCategory(ItemDto.getCategory());
+        createdItem.setVendor(vendorRepository.findById(ItemDto.getVendorId()).orElseThrow(() -> new RuntimeException("Customer not found")));
+        Item mainItem = itemService.createItem(createdItem);
+        return new ResponseEntity<>(mainItem, HttpStatus.CREATED);
     }
 
     // Get Item by ID

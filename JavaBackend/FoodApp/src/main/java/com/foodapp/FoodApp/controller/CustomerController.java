@@ -1,24 +1,32 @@
 package com.foodapp.FoodApp.controller;
 
+import com.foodapp.FoodApp.Repo.CustomerRepo;
 import com.foodapp.FoodApp.entities.Customer;
 import com.foodapp.FoodApp.entities.Order;
 import com.foodapp.FoodApp.entities.Review;
+import com.foodapp.FoodApp.entities.UserRequest;
 import com.foodapp.FoodApp.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
 @CrossOrigin(origins = "http://localhost:3000")
+@RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
     @Autowired
     private final CustomerService customerService;
+    @Autowired
+    private CustomerRepo customerRepo;
 
-    
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
@@ -26,8 +34,25 @@ public class CustomerController {
     // Create or update a customer
     @PostMapping
     public ResponseEntity<Customer> createOrUpdateCustomer(@RequestBody Customer customer) {
+        
         Customer savedCustomer = customerService.saveCustomer(customer);
         return ResponseEntity.ok(savedCustomer);
+    }
+
+    // Login
+    @PostMapping("/login")
+    public ResponseEntity<String> loginCustomer(@RequestBody UserRequest userRequest){
+        Customer customer = customerRepo.findByName(userRequest.getUsername());
+
+        if (customer == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
+
+        if (passwordEncoder.matches(userRequest.getPassword(), customer.getPassword())) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
     }
 
     // Get a customer by ID
