@@ -19,7 +19,6 @@ public class Vendor {
   private String password;
   private String address;
   private String shopName;
-  private String location;
   private Double rating = 0.0;
   private String imageUrl;
 

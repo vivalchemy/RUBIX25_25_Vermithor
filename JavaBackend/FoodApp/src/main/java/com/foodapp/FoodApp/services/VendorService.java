@@ -35,7 +35,6 @@ public class VendorService {
             vendor.setName(vendorDetails.getName());
             vendor.setAddress(vendorDetails.getAddress());
             vendor.setShopName(vendorDetails.getShopName());
-            vendor.setLocation(vendorDetails.getLocation());
             vendor.setRating(vendorDetails.getRating());
             return vendorRepository.save(vendor);
         }).orElseThrow(() -> new RuntimeException("Vendor not found with id: " + vendorId));

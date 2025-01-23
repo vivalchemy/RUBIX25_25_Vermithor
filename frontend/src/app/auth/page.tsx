@@ -6,7 +6,7 @@ import { useState } from "react"
 import { SignUpForm } from "@/components/sign-up-form"
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true)
+  const [loginState, setLoginState] = useState(true)
   return (
     <div className="mt-24 min-h-svh">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -20,8 +20,8 @@ export default function Auth() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            {isLogin ? <LoginForm setIsLogin={setIsLogin} /> :
-              <SignUpForm setIsLogin={setIsLogin} />}
+            {loginState ? <LoginForm setLoginState={setLoginState} /> :
+              <SignUpForm setLoginState={setLoginState} />}
           </div>
         </div>
       </div>

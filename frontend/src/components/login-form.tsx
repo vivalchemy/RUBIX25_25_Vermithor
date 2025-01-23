@@ -5,9 +5,9 @@ import { Label } from "@/components/ui/label"
 
 export function LoginForm({
   className,
-  setIsLogin,
+  setLoginState,
   ...props
-}: { className?: string, setIsLogin: (isLogin: boolean) => void }) {
+}: { className?: string, setLoginState: (loginState: boolean) => void }) {
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -40,7 +40,7 @@ export function LoginForm({
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
         <Button variant="link" className="underline underline-offset-4"
-          onClick={() => setIsLogin(false)}
+          onClick={() => setLoginState(false)}
         >
           Sign up
         </Button>

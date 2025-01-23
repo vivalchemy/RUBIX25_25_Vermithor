@@ -18,7 +18,6 @@ public class Customer {
   private String email;
   private String phone;
   private String address;
-  private String location;
   private String password;
   @JsonIgnore
   @JsonManagedReference(value = "vendor-order12")
