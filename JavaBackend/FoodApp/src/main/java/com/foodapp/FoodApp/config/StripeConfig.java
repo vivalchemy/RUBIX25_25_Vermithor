@@ -1,6 +1,5 @@
 package com.foodapp.FoodApp.config;
 
-import com.stripe.Stripe;
 import com.stripe.StripeClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +12,8 @@ public class StripeConfig {
 
     @Bean
     public StripeClient stripeClient() {
-        Stripe.apiKey = stripeSecretKey;
-        return new StripeClient(stripeSecretKey);
+        return new StripeClient.StripeClientBuilder()
+                .setApiKey(stripeSecretKey)
+                .build();
     }
 }

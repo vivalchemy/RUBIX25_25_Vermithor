@@ -18,9 +18,10 @@ public class StripeService {
     public PaymentResponse processPayment(PaymentRequest request) {
         try {
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(Math.round(request.getAmount() * 100L))
+                    .setAmount(Math.round(request.getAmount()))
                     .setCurrency(request.getCurrency())
-                    .setPaymentMethod(request.getToken())
+                    .setPaymentMethod("pm_card_visa")
+                    .setReturnUrl("http://localhost:3000/")
                     .setConfirm(true)
                     .build();
 
