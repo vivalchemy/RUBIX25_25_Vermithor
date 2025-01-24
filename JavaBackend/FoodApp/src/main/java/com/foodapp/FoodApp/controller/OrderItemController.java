@@ -27,11 +27,11 @@ public class OrderItemController {
     }
 
     // Get all OrderItems
-//    @GetMapping
-//    public ResponseEntity<List<OrderItemDTO>> getAllOrderItems() {
-//        List<OrderItemDTO> orderItemsDTO = orderItemService.getAllOrderItems();
-//        return new ResponseEntity<>(orderItemsDTO, HttpStatus.OK);
-//    }
+    @GetMapping
+    public ResponseEntity<List<OrderItem>> getAllOrderItems() {
+        List<OrderItem> orderItemsDTO = orderItemService.getALLOrderItem();
+        return new ResponseEntity<>(orderItemsDTO, HttpStatus.OK);
+    }
 //
 //    // Get OrderItem by ID
 //    @GetMapping("/{id}")

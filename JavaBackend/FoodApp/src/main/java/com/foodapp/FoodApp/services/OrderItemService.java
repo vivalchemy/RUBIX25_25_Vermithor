@@ -49,6 +49,10 @@ public class OrderItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("OrderItem not found"));
     }
 
+    public List<OrderItem> getALLOrderItem(){
+        return orderItemRepo.findAll();
+    }
+
     // Get all OrderItems for a particular Order
     public List<OrderItem> getOrderItemsByOrderId(Long orderId) {
         return orderItemRepo.findByOrderOrderId(orderId);

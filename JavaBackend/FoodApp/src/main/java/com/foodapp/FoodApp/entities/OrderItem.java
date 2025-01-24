@@ -12,7 +12,7 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderItemId;
-    @JsonIgnore
+    
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
