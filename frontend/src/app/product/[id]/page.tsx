@@ -18,6 +18,17 @@ const arLinks: Record<string, string> = {
   "apple": "https://mywebar.com/p/apple-"
 };
 
+interface CartItem {
+  id: string
+  name: string
+  vendor: string
+  price: number
+  quantity: number
+  rating: number
+  timeToArrive: string
+  image: string
+}
+
 function ProductPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
@@ -100,7 +111,7 @@ function ProductPage() {
         <RelatedProducts products={relatedProducts} handleAddToCart={handleAddToCart} />
 
         {/* Reviews */}
-        <Reviews product={currentProduct} />
+        <Reviews product={currentProduct as ProductType} />
       </div>
     </>
   );

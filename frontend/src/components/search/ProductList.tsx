@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { EnhancedPagination } from "@/components/search/EnhancedPagination";
 import { useRouter } from "next/navigation";
+import { ProductType } from "@/lib/types";
 
 interface Product {
   id: string;
@@ -21,12 +22,31 @@ interface Product {
 }
 
 //TODO: go to line 61 and remove the - 1 from the product id
-export function ProductList({ products, itemsPerPage }: { products: Product[]; itemsPerPage: number }) {
+export function ProductList({ products, itemsPerPage }: { products: ProductType[]; itemsPerPage: number }) {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  function handleAddToCart(product: ProductType) {
+    const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+    // Check if the product already exists in the cart
+    const existingProductIndex = cart.findIndex(item => item.id === product.id);
+
+    if (existingProductIndex >= 0) {
+      // If product already exists in cart, just update the quantity
+      cart[existingProductIndex].quantity += 1;
+    } else {
+      // Otherwise, add the product with quantity 1
+      const productWithQuantity = { ...product, quantity: 1 };
+      cart.push(productWithQuantity);
+    }
+
+    // Save the updated cart back to localStorage
+    localStorage.setItem('cartItems', JSON.stringify(cart));
+  }
 
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, index) => (
@@ -98,7 +118,12 @@ export function ProductList({ products, itemsPerPage }: { products: Product[]; i
 
                 <div className="flex items-center pt-2 justify-between">
                   <div className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</div>
-                  <Button variant="outline" className="shrink-0">
+                  <Button variant="outline" className="shrink-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(product)
+                    }}
+                  >
                     <ShoppingBasket /> Add to Basket
                   </Button>
                 </div>
