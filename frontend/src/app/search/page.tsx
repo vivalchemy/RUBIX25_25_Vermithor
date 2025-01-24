@@ -70,7 +70,7 @@ export default function Search() {
           <div className="mx-auto">
             <TopRecommendations products={filteredProducts.slice(0, 3)} />
           </div>
-          <Map products={filteredProducts} />
+          <Map products={filteredProducts} initialQuery={query as string} />
           <div>
             <ProductList products={filteredProducts} itemsPerPage={14} />
           </div>
