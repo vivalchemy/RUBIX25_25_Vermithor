@@ -5,8 +5,12 @@ import BestDish from "./BestDish"
 import TotalEarnings from "./TotalEarnings"
 import DishList from "./DishList"
 import axios from "axios"
-import { Loader2 } from "lucide-react"
+import { Loader2, Table } from "lucide-react"
 import NavBar from "@/components/home/NavBar"
+import Markdown from 'react-markdown'
+import { Order } from "@/lib/types/Reset"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export interface VendorType {
   name: string
@@ -30,10 +34,22 @@ export interface DishType {
 }
 
 
+export interface AiResponse {
+  predicted_sales: number
+  last_7_days_items: Last7DaysItem[]
+}
+
+export interface Last7DaysItem {
+  Item: string
+  "Sales (Qty)": number
+}
+
 export default function VendorDashboard() {
   const [filter, setFilter] = useState<"all" | "listed" | "draft" | "archived">("all")
   const [vendor, setVendor] = useState<VendorType | null>(null)
   const [loading, setLoading] = useState(true);
+  const [aiResponse, setAiResponse] = useState<AiResponse | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,6 +62,43 @@ export default function VendorDashboard() {
       .catch((err) => {
         console.error(err);
         setError("Failed to load offers");
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get("/api/orders").then((response) => {
+      console.log(response.data);
+      setOrders(response.data);
+    }).catch((err) => {
+      console.error(err);
+      setError("Failed to load orders");
+    }).finally(() => {
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .post("http://localhost:8000/predict-food", {
+        last_7_days_data: [
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0],
+        ],
+      })
+      .then((response) => {
+        setAiResponse(response.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
@@ -81,7 +134,35 @@ export default function VendorDashboard() {
           <BestDish dish={vendor?.bestDish as BestDishType} />
           <TotalEarnings amount={vendor?.totalEarnings as number} />
         </div>
-        <DishList dishes={vendor?.dishes as DishType[]} filter={filter} setFilter={setFilter} />
+        <div className="bg-gray-200 p-4 rounded-lg">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Sales Dashboard</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <p>Predicted Sales: ${aiResponse?.predicted_sales.toLocaleString()}</p>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Item</TableHead>
+                    <TableHead className="text-right">Sales (Qty)</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {aiResponse?.last_7_days_items.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{item.Item}</TableCell>
+                      <TableCell className="text-right">{item["Sales (Qty)"].toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+        <DishList dishes={orders} filter={filter} setFilter={setFilter} />
       </div>
     </>
   )

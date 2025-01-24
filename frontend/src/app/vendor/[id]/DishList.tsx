@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Star } from "lucide-react"
+import { Order } from "@/lib/types/Reset"
 
 interface Dish {
   id: number
@@ -11,7 +12,7 @@ interface Dish {
 }
 
 interface DishListProps {
-  dishes: Dish[]
+  dishes: Order[]
   filter: "all" | "listed" | "draft" | "archived"
   setFilter: (filter: "all" | "listed" | "draft" | "archived") => void
 }
@@ -38,26 +39,17 @@ export default function DishList({ dishes, filter, setFilter }: DishListProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
+            <TableHead>Time</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Rating</TableHead>
+            <TableHead>Price</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredDishes.map((dish) => (
-            <TableRow key={dish.id}>
-              <TableCell>{dish.name}</TableCell>
+            <TableRow key={dish.orderId}>
+              <TableCell>{dish.orderTime.toString()}</TableCell>
               <TableCell>{dish.status}</TableCell>
-              <TableCell>
-                {dish.rating > 0 ? (
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                    <span>{dish.rating.toFixed(1)}</span>
-                  </div>
-                ) : (
-                  "N/A"
-                )}
-              </TableCell>
+              <TableCell>{dish.totalPrice.toFixed(2)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
