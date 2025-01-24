@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { CameraModal } from '@/components/CameraModal'
+import { CameraModal } from '@/app/video_predict/CameraModal'
 import { Header } from '@/components/Headers'
 import { MainContent } from '@/components/MainContent'
 
@@ -157,6 +159,10 @@ export default function HomePage() {
     }
   }, []);
 
+  const handleSubmitForm = (formData: any) => {
+    console.log("Form submitted with data:", formData);
+  };
+
   return (
     <div className="flex h-screen bg-background text-foreground relative">
       <div className="flex-1 flex flex-col p-4 overflow-y-auto">
@@ -176,6 +182,7 @@ export default function HomePage() {
           openCamera={openCamera}
           cameraPermission={cameraPermission}
           markdownAnalysis={markdownAnalysis}
+          handleSubmitForm={handleSubmitForm} 
         />
       </div>
 

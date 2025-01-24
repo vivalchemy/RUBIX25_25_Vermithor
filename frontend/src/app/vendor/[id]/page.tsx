@@ -7,7 +7,6 @@ import DishList from "./DishList"
 import axios from "axios"
 import { Loader2, Table } from "lucide-react"
 import NavBar from "@/components/home/NavBar"
-import Markdown from 'react-markdown'
 import { Order } from "@/lib/types/Reset"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -103,6 +102,8 @@ export default function VendorDashboard() {
       });
   }, []);
 
+  console.log(aiResponse?.last_7_days_items[0].Item);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px] bg-gray-50">
@@ -151,10 +152,15 @@ export default function VendorDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {aiResponse?.last_7_days_items.map((item, index) => (
+                  {aiResponse?.last_7_days_items?.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell>{item.Item}</TableCell>
-                      <TableCell className="text-right">{item["Sales (Qty)"].toLocaleString()}</TableCell>
+                      <TableCell className="text-right">
+                        {Number(item["Sales (Qty)"]).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

@@ -77,42 +77,66 @@ async def analyze_reviews(request: ReviewRequest):
 
     return {"results": output}
 
-
-@app.post("/process-image/")
-async def process_image(file: UploadFile = File(...)):
-    try:
-        # Read the uploaded image file
-        image_content = await file.read()
-        image_path = "temp_image.jpg"
+@app.post("/process-image/") 
+async def process_image(file: UploadFile = File(...)): 
+    image_path = None 
+    try: 
+        # Configure Gemini API key
+        genai.configure(api_key="AIzaSyBb8jJEBqufX-rp9BVy-g2SWzymLixKgm8")
         
-        # Write the image content to a temporary file
-        with open(image_path, 'wb') as temp_file:
-            temp_file.write(image_content)
-
-        # Upload the image to Google Generative AI (Gemini)
-        myfile = genai.upload_file(image_path)
-
-        # Generate content with the Generative Model
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        result = model.generate_content(
-            [
-                myfile,
-                "\n\n",
-                "Can you tell me about the waste in the image and suggestions to reuse this in a formatted way showing items? Make a list of all items present."
-            ]
+        print(f"Received file: {file.filename}") 
+         
+        # Read and save image 
+        image_content = await file.read() 
+         
+        if not image_content: 
+            raise HTTPException(status_code=400, detail="Empty file received") 
+         
+        image_path = f"temp_{file.filename}" 
+         
+        with open(image_path, 'wb') as temp_file: 
+            temp_file.write(image_content) 
+ 
+        file_size = os.path.getsize(image_path) 
+        print(f"File size: {file_size} bytes") 
+ 
+        try: 
+            myfile = genai.upload_file(image_path) 
+            model = genai.GenerativeModel("gemini-1.5-flash") 
+            result = model.generate_content([ 
+                myfile, 
+                "\n\n", 
+                "Can you tell me about the waste in the image and suggestions to reuse this in a formatted way showing items? Make a list of all items present." 
+            ]) 
+        except Exception as gemini_error: 
+            print(f"Gemini processing error: {gemini_error}") 
+            raise 
+ 
+        # Clean up 
+        os.remove(image_path) 
+        genai.delete_file(myfile) 
+ 
+        return JSONResponse( 
+            content={ 
+                "result": result.text, 
+                "status": "success" 
+            },  
+            status_code=200 
+        ) 
+ 
+    except Exception as e: 
+        print(f"Full error details: {str(e)}") 
+         
+        if image_path and os.path.exists(image_path): 
+            os.remove(image_path) 
+         
+        return JSONResponse( 
+            content={ 
+                "error": str(e), 
+                "status": "failed" 
+            }, 
+            status_code=500 
         )
-        
-        # Clean up the temporary image file
-        os.remove(image_path)
-
-        # Return the generated response
-        return JSONResponse(content={"result": result.text}, status_code=200)
-
-    except Exception as e:
-        # Handle errors and exceptions
-        if os.path.exists(image_path):
-            os.remove(image_path)  # Clean up the file if an error occurs
-        raise HTTPException(status_code=500, detail=str(e))
-
+    
 # To run the FastAPI app, use the following command in terminal:
 # uvicorn main:app --reload

@@ -73,6 +73,9 @@ export default function NavBar() {
         <Button variant="outline" onClick={() => router.push("/cart")}>
           Cart
         </Button>
+        <Button variant="outline" onClick={() => router.push("/video_predict")}>
+          Analyze Waste Methods
+        </Button>
         {!isLoggedIn ? (
           <>
             <Button onClick={() => router.push("/auth")}>Sign up</Button>
