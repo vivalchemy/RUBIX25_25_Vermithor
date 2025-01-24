@@ -138,5 +138,41 @@ async def process_image(file: UploadFile = File(...)):
             status_code=500 
         )
     
+@app.post("/predict-price/")
+async def get_gemini_suggestion(review):
+    # URL for the Gemini API suggestion endpoint (Replace with the actual Gemini API endpoint)
+    genai.configure(api_key="AIzaSyBb8jJEBqufX-rp9BVy-g2SWzymLixKgm8")
+
+    # Create the model
+    generation_config = {
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_output_tokens": 8192,
+    "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash-8b",
+    generation_config=generation_config,
+    )
+
+    chat_session = model.start_chat(
+    history=[
+    ]
+    )
+    message = f"Provide Uses details and till when can use, What to do to increase lifetime, and average prize in rupees in mumbai and what can be done to make it  better in one lines: {review}"
+    response = chat_session.send_message(message)
+    data = response.text
+    return data
+
+# Analyze sentiment for each review using Hugging Face
+# results = sentiment_analysis(reviews)
+reviews=['pizza','burger','water']
+# Output the sentiment analysis result and suggestion from Gemini API
+for review in reviews:
+    # Get suggestion from Gemini based on the sentiment
+    gemini_suggestion = get_gemini_suggestion(review)
+    print(f"Suggestion: {gemini_suggestion}\n")
 # To run the FastAPI app, use the following command in terminal:
 # uvicorn main:app --reload

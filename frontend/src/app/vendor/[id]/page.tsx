@@ -5,11 +5,11 @@ import BestDish from "./BestDish"
 import TotalEarnings from "./TotalEarnings"
 import DishList from "./DishList"
 import axios from "axios"
-import { Loader2, Table } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import NavBar from "@/components/home/NavBar"
 import { Order } from "@/lib/types/Reset"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export interface VendorType {
   name: string
