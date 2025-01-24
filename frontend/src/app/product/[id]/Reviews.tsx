@@ -15,6 +15,12 @@ function Reviews({ productId }: { productId: string }) {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewSubmissionError, setReviewSubmissionError] = useState<string | null>(null);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    setRole(storedRole);
+  }, []);
 
   // Retrieve reviews from localStorage
   useEffect(() => {
@@ -29,6 +35,7 @@ function Reviews({ productId }: { productId: string }) {
     localStorage.setItem(`reviews_${productId}`, JSON.stringify(updatedReviews));
     setReviews(updatedReviews);
   };
+  console.log(role);
 
   // Submit a new review to the backend and save to localStorage
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -73,14 +80,14 @@ function Reviews({ productId }: { productId: string }) {
             {reviews.length} Reviews
           </Badge>
         </div>
-        <Button
+        {role !== 'vendor' ? (<Button
           variant="outline"
           className="text-sm"
           onClick={() => setShowReviewSubmissionModal((prev) => !prev)}
         >
           {!showReviewSubmissionModal ? <PencilIcon className="h-5 w-5" /> : <X className="h-5 w-5" />}
           {showReviewSubmissionModal ? 'Cancel' : 'Write a Review'}
-        </Button>
+        </Button>) : (<div></div>)}
       </div>
 
       {/* Existing Reviews */}
@@ -90,10 +97,10 @@ function Reviews({ productId }: { productId: string }) {
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <Badge variant="secondary">{review.gemini_suggestion}</Badge>
+                  {role === 'vendor' ? (<Badge variant="secondary">{review.gemini_suggestion}</Badge>) : (<div></div>)}
                   <p className="text-sm text-gray-900 font-medium">{review.review}</p>
                   <p className="text-xs text-gray-500 mt-1">Rating: {review.rating}</p>
-                  <p className="text-xs text-gray-500 mt-1">Sentiment: {review.sentiment}</p>
+                  {role === 'vendor' ? (<p className="text-xs text-gray-500 mt-1">Sentiment: {review.sentiment}</p>) : (<div></div>)}
                 </div>
               </div>
             </CardContent>
