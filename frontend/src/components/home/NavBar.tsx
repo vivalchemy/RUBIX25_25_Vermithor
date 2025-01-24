@@ -69,7 +69,7 @@ export default function NavBar() {
         Foodie
       </Link>
       <div className="flex gap-2">
-        {roleCheck === "vendor" ? <Button onClick={() => router.push(`/vendor/${vendorCheck}/add`)}>Add Products</Button> : null}
+        {roleCheck === "vendor" ? <Button onClick={() => router.push(`/vendor/${vendorCheck}/add?vendor=${vendorCheck}`)}>Add Products</Button> : null}
         <Button variant="outline" onClick={() => router.push("/cart")}>
           Cart
         </Button>

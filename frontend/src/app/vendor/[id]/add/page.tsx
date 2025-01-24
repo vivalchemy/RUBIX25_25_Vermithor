@@ -1,9 +1,14 @@
+import NavBar from '@/components/home/NavBar'
 import React from 'react'
+import { AddProduct } from './AddProduct'
 
-function Add() {
+function Products() {
   return (
-    <div>Add Product</div>
+    <>
+      <NavBar />
+      <AddProduct />
+    </>
   )
 }
 
-export default Add
+export default Products
