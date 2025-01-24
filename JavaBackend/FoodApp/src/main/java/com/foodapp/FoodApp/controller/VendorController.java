@@ -121,4 +121,14 @@ public class VendorController {
       return ResponseEntity.notFound().build();
     }
   }
+
+  @GetMapping("/item/{id}")
+  public ResponseEntity<Vendor> getByItemId12(@PathVariable Long id){
+    Vendor vendor = vendorService.findVendorByItemId(id);
+    if (vendor != null) {
+      return ResponseEntity.ok(vendor);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
 }

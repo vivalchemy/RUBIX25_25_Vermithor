@@ -1,6 +1,5 @@
 package com.foodapp.FoodApp.services;
 
-import com.foodapp.FoodApp.entities.Customer;
 import com.foodapp.FoodApp.entities.Item;
 import com.foodapp.FoodApp.entities.Order;
 import com.foodapp.FoodApp.entities.Review;
@@ -102,6 +101,10 @@ public class VendorService {
             return items;
         }
         return null;
+    }
+
+    public Vendor findVendorByItemId(Long id){
+        return vendorRepository.findVendorByItemId(id);
     }
 
 }
