@@ -16,6 +16,10 @@ public class Item {
     private Double price;
     private Category category;  //  DRAFTED,ARCHIVED,READY
     private Double rating;
+    private String description;
+    private String imgLink;
+    private Integer timeToArrive;
+    private Integer peopleRequired;
 
     @JsonIgnore
     @ManyToOne

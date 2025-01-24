@@ -9,4 +9,8 @@ public class ItemDTO {
     private Category category;
     private Long vendorId;
     private Double rating;
+    private String description;
+    private String imgLink;
+    private Integer timeToArrive;
+    private Integer peopleRequired;
 }
