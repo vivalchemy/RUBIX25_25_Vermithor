@@ -4,6 +4,9 @@ import { useState, useEffect } from "react"
 import { Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js"
+import { loadStripe } from "@stripe/stripe-js"
 import axios from "axios"
 
 interface CartItem {
@@ -17,9 +20,73 @@ interface CartItem {
     image: string
 }
 
+const stripePromise = loadStripe("pk_test_51PXp2oIxKA4SqfaM2SFwVQVZBJ9bmcWnh2HgtcYashdagjEWjDthFk8Gn8Oj7wfu0jBldTMBMiE3UnUEuKkPm3mH00uW5HX8qL") // Replace with your Stripe publishable key
+
+const PaymentForm = ({ totalPrice, onSuccess }: { totalPrice: number; onSuccess: () => void }) => {
+    const stripe = useStripe()
+    const elements = useElements()
+    const [isProcessing, setIsProcessing] = useState(false)
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!stripe || !elements) return
+
+        setIsProcessing(true)
+        try {
+            const cardElement = elements.getElement(CardElement)
+            if (!cardElement) throw new Error("Card Element not found")
+
+            // Create payment method
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: "card",
+                card: cardElement,
+            })
+
+            if (error) {
+                alert(error.message)
+                setIsProcessing(false)
+                return
+            }
+
+            // Make a payment request
+            const response = await axios.post("http://localhost:8080/payments/charge", {
+                paymentMethodId: paymentMethod.id,
+                amount: totalPrice * 100, // Amount in cents
+                currency: "usd", // Currency
+            })
+
+            if (response.status === 200) {
+                alert("Payment successful!")
+                onSuccess()
+            } else {
+                alert(response.data.error || "Payment failed.")
+            }
+        } catch (error) {
+            console.error("Payment error:", error)
+            alert("An unexpected error occurred.")
+        } finally {
+            setIsProcessing(false)
+        }
+    }
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <CardElement className="p-4 border rounded-md w-full" />
+            <Button
+                type="submit"
+                variant="default"
+                className="mt-4"
+                disabled={isProcessing}
+            >
+                {isProcessing ? "Processing..." : `Pay $${totalPrice.toFixed(2)}`}
+            </Button>
+        </form>
+    )
+}
+
 export default function ShoppingCart() {
     const [cartItems, setCartItems] = useState<CartItem[]>([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [showPaymentForm, setShowPaymentForm] = useState(false)
 
     const getLocalStorage = (key: string): any => {
         if (typeof window !== "undefined") {
@@ -59,32 +126,10 @@ export default function ShoppingCart() {
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-    const handleStripePayment = async () => {
-        setIsLoading(true)
-        try {
-            const response = await axios.post("http://localhost:8080/payments/charge", {
-                amount: totalPrice * 100, // Amount in cents
-                currency: "usd", // Currency
-            })
-    
-            if (response.status === 200) {
-                const { paymentUrl } = response.data
-                window.location.href = paymentUrl // Redirect to Stripe Checkout
-            } else {
-                alert(response.data.error || "Failed to create payment intent.")
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                // Axios-specific error handling
-                alert(error.response?.data?.error || "An error occurred while processing the payment.")
-            } else {
-                // Generic error handling
-                console.error("Unexpected error:", error)
-                alert("An unexpected error occurred.")
-            }
-        } finally {
-            setIsLoading(false)
-        }
+    const handlePaymentSuccess = () => {
+        setCartItems([])
+        setLocalStorage("cartItems", [])
+        setShowPaymentForm(false)
     }
 
     return (
@@ -138,17 +183,31 @@ export default function ShoppingCart() {
                     </ul>
                 )}
             </CardContent>
-            <CardFooter className="justify-between">
-                <strong>Total:</strong>
-                <span>${totalPrice.toFixed(2)}</span>
+            <CardFooter className="flex flex-col space-y-4">
+                <div className="flex justify-between">
+                    <strong>Total:</strong>
+                    <span>${totalPrice.toFixed(2)}</span>
+                </div>
                 <Button
                     variant="default"
-                    onClick={handleStripePayment}
-                    disabled={cartItems.length === 0 || isLoading}
+                    onClick={() => setShowPaymentForm(true)}
+                    disabled={cartItems.length === 0}
                 >
-                    {isLoading ? "Processing..." : "Proceed to Payment"}
+                    Proceed to Payment
                 </Button>
             </CardFooter>
+
+            {/* Payment Form Modal */}
+            <Dialog open={showPaymentForm} onOpenChange={setShowPaymentForm}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Payment Details</DialogTitle>
+                    </DialogHeader>
+                    <Elements stripe={stripePromise}>
+                        <PaymentForm totalPrice={totalPrice} onSuccess={handlePaymentSuccess} />
+                    </Elements>
+                </DialogContent>
+            </Dialog>
         </Card>
     )
 }
