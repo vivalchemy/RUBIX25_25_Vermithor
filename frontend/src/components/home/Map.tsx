@@ -30,6 +30,11 @@ export default function Map() {
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [vendors, setVendors] = useState<{ location_lat: number; location_lon: number; name: string }[]>([]);
+  const [routeInfo, setRouteInfo] = useState<{
+    totalDistance: string;
+    totalDuration: string;
+    weatherConditions: { waypoint: string; temperature: number; weather: string }[];
+  } | null>(null);
 
   // Get user's current location
   useEffect(() => {
@@ -126,6 +131,11 @@ export default function Map() {
       });
 
       setWaypoints(fetchedWaypoints);
+      setRouteInfo({
+        totalDistance: data.total_distance_km,
+        totalDuration: data.total_duration_min,
+        weatherConditions: data.weather_conditions,
+      });
     } catch (error) {
       console.error("Error fetching directions:", error);
     }
@@ -208,6 +218,21 @@ export default function Map() {
           {loading ? "Loading..." : "Get Directions"}
         </button>
       </div>
+
+      {routeInfo && (
+        <div className="mb-4 p-4 bg-gray-100 rounded shadow">
+          <p><strong>Total Distance:</strong> {routeInfo.totalDistance}</p>
+          <p><strong>Total Duration:</strong> {routeInfo.totalDuration}</p>
+          <h4 className="mt-2"><strong>Weather Conditions:</strong></h4>
+          <ul className="list-disc pl-5">
+            {routeInfo.weatherConditions.map((condition, index) => (
+              <li key={index}>
+                {condition.waypoint}: {condition.temperature}°C, {condition.weather}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="h-[400px] w-full mx-auto relative mb-8">
         <MapContainer

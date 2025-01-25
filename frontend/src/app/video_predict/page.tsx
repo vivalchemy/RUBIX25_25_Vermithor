@@ -2,17 +2,12 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { CameraModal } from '@/app/video_predict/CameraModal'
-import { Header } from '@/components/Headers'
-import { MainContent } from '@/components/MainContent'
+import { MainContent } from '@/app/video_predict/MainContent'
 
 export default function HomePage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [inputMessage, setInputMessage] = useState('')
-  const [markdownAnalysis, setMarkdownAnalysis] = useState("")
   const [isCameraOpen, setIsCameraOpen] = useState(false)
-  const [isChatOpen, setIsChatOpen] = useState(false)
   const [cameraPermission, setCameraPermission] = useState<PermissionState | null>(null)
-  const [analysisMode, setAnalysisMode] = useState<'Image Analysis' | 'Manual'>('Image Analysis')
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -52,23 +47,6 @@ export default function HomePage() {
 
       const formData = new FormData();
       formData.append('file', file);
-
-      try {
-        const response = await fetch('http://192.168.29.35:8000/quality/', { 
-          method: 'POST',
-          body: formData,
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          console.log('Upload successful:', result.file_text);
-          setMarkdownAnalysis(result.file_text);
-        } else {
-          console.error('Upload failed:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error while uploading image:', error);
-      }
     };
   }
 
@@ -138,23 +116,6 @@ export default function HomePage() {
 
         const formData = new FormData();
         formData.append('file', imageFile);
-
-        try {
-          const response = await fetch('http://192.168.29.35:8000/quality/', {
-            method: 'POST',
-            body: formData,
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            console.log('Upload successful:', result.file_text);
-            setMarkdownAnalysis(result.file_text);
-          } else {
-            console.error('Upload failed:', response.statusText);
-          }
-        } catch (error) {
-          console.error('Error while uploading image:', error);
-        }
       }
     }
   }, []);
@@ -166,22 +127,12 @@ export default function HomePage() {
   return (
     <div className="flex h-screen bg-background text-foreground relative">
       <div className="flex-1 flex flex-col p-4 overflow-y-auto">
-        <Header
-          isChatOpen={isChatOpen}
-          setIsChatOpen={setIsChatOpen}
-          analysisMode={analysisMode}
-          handleDropdownChange={(mode) => { 
-            setAnalysisMode(mode === "Image Analysis" ? "Image Analysis" : "Manual") 
-          }}
-        />
         <MainContent
-          analysisMode={analysisMode}
           selectedImage={selectedImage}
           handleRemoveImage={handleRemoveImage}
           handleImageUpload={handleImageUpload}
           openCamera={openCamera}
           cameraPermission={cameraPermission}
-          markdownAnalysis={markdownAnalysis}
           handleSubmitForm={handleSubmitForm} 
         />
       </div>

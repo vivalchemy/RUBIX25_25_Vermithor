@@ -89,7 +89,7 @@ function ProductDetails({ product, handleAddToCart }: { product: ProductType, ha
             </Button>
             <Button variant="outline" className="px-4"
               onClick={() => {
-                router.push(`${arLinkOfProduct}`);
+                window.open(`${arLinkOfProduct}`, "_blank");
               }}>
               <Rotate3d className="h-4 w-4" />
               View in AR

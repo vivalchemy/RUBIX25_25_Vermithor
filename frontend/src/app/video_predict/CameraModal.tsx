@@ -8,7 +8,7 @@ interface CameraModalProps {
   isCameraOpen: boolean
   onOpenChange: (open: boolean) => void
   captureImage: () => void
-  videoRef: React.RefObject<HTMLVideoElement>
+  videoRef: React.RefObject<HTMLVideoElement | null>;
 }
 
 export function CameraModal({
