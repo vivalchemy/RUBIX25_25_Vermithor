@@ -145,7 +145,7 @@ export default function ShoppingCart() {
                         {cartItems.map((item) => (
                             <li key={item.id} className="flex items-center justify-between border-b pb-4">
                                 <div className="flex items-center space-x-4">
-                                    <img src={item.image} alt={item.name} className="w-16 h-16 object-cover" />
+                                    <img src={item.imgLink} alt={item.name} className="w-16 h-16 object-cover" />
                                     <div>
                                         <h3 className="font-semibold">{item.name}</h3>
                                         <p className="text-sm text-gray-500">Vendor: {item.vendor}</p>

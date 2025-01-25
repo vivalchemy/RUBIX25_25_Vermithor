@@ -41,6 +41,17 @@ export const AddProduct = () => {
             const response = await axios.post('/api/items', { ...formData, vendorId: vendor });
             alert('Product added successfully!');
             console.log(response.data);
+
+            setFormData({
+                name: '',
+                price: '',
+                category: '',
+                rating: '',
+                description: '',
+                imgLink: '',
+                timeToArrive: '',
+                peopleRequired: '',
+            });
         } catch (error) {
             console.error('Error adding product:', error);
             alert('Failed to add product.');
@@ -54,7 +65,7 @@ export const AddProduct = () => {
     const formFields = [
         { label: 'Name', name: 'name', type: 'text', placeholder: 'Product Name' },
         { label: 'Price', name: 'price', type: 'number', placeholder: 'Product Price' },
-        { label: 'Rating', name: 'rating', type: 'number', placeholder: 'Rating (1-5)', min: 1, max: 5, step: 0.1 },
+        { label: 'Rating', name: 'rating', type: 'number', placeholder: 'Rating (1-5)' },
         { label: 'Image Link', name: 'imgLink', type: 'url', placeholder: 'Image URL' },
         { label: 'Time to Arrive', name: 'timeToArrive', type: 'number', placeholder: 'Time (in minutes)' },
         { label: 'People Required', name: 'peopleRequired', type: 'number', placeholder: 'Number of People Required' },
@@ -83,8 +94,6 @@ export const AddProduct = () => {
                                         onChange={handleInputChange}
                                         className="mt-1 block w-full"
                                         required
-                                        min={field.min}
-                                        max={field.max}
                                     />
                                 </div>
                             ))}

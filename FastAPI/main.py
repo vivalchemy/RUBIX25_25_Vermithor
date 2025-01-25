@@ -240,7 +240,7 @@ async def analyze_reviews(request: ReviewRequest):
             "review": review,
             "sentiment": sentiment,
             "confidence": result['score'],
-            "gemini_suggestion": suggestion,
+            "shortText": suggestion,
         })
 
     return {"results": output}

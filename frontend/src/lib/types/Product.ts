@@ -1,7 +1,7 @@
 type Product = {
   description: string;
   id: string;
-  image: string;
+  imgLink: string;
   name: string;
   peopleRequired: number;
   price: number;

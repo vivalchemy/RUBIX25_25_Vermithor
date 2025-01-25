@@ -24,8 +24,16 @@ public class Review {
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
-    private String reviewText;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "item_id", nullable = false)
+    private Item item;
+
+    private String review;
     private Double rating;
     private LocalDate reviewDate;
+    private String shortText;
+    private String sentiment; // POSITIVE or NEGATIVE
+    private Double confidence;
 }
 

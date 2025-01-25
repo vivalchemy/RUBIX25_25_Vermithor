@@ -1,8 +1,10 @@
 package com.foodapp.FoodApp.services;
+import com.foodapp.FoodApp.entities.Vendor;
 
 import com.foodapp.FoodApp.Repo.CustomerRepo;
 import com.foodapp.FoodApp.Repo.ReviewRepo;
 import com.foodapp.FoodApp.Repo.VendorRepo;
+import com.foodapp.FoodApp.Repo.ItemRepo;
 import com.foodapp.FoodApp.entities.Review;
 import com.foodapp.FoodApp.exception.ResourceNotFoundException;
 import com.foodapp.FoodApp.utils.ReviewDTO;
@@ -20,14 +22,25 @@ public class ReviewService {
     private CustomerRepo customerRepository;
     @Autowired
     private VendorRepo vendorRepository;
+    @Autowired
+    private ItemRepo itemRepository;
+    @Autowired
+    private VendorService vendorService;
 
     public Review createReview(ReviewDTO reviewDTO) {
         Review review = new Review();
+        Vendor vendor = vendorService.findVendorByItemId(reviewDTO.getItemId());
+        
         review.setCustomer(customerRepository.findById(reviewDTO.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found")));
-        review.setVendor(vendorRepository.findById(reviewDTO.getVendorId())
+        review.setVendor(vendorRepository.findById(vendor.getVendorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found")));
-        review.setReviewText(reviewDTO.getReviewText());
+        review.setItem(itemRepository.findById(reviewDTO.getItemId())
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found")));
+        review.setReview(reviewDTO.getReview());
+        review.setShortText(reviewDTO.getShortText());
+        review.setSentiment(reviewDTO.getSentiment());
+        review.setConfidence(reviewDTO.getConfidence());
         review.setRating(reviewDTO.getRating());
         review.setReviewDate(LocalDate.now());
         return reviewRepository.save(review);
@@ -42,13 +55,17 @@ public class ReviewService {
         return reviewRepository.findByVendorVendorId(vendorId);
     }
 
+    public List<Review> getItemReviews(Long itemId) {
+        return reviewRepository.findByItemItemId(itemId);
+    }
+
     public void deleteReview(Long id) {
         reviewRepository.deleteById(id);
     }
 
     public Review updateReview(Long id, ReviewDTO reviewDTO) {
         Review review = getReview(id);
-        review.setReviewText(reviewDTO.getReviewText());
+        review.setReview(reviewDTO.getReview());
         review.setRating(reviewDTO.getRating());
         return reviewRepository.save(review);
     }

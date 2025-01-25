@@ -14,7 +14,7 @@
       "id": 2,
       "name": "Fresh Bread",
       "vendor": "Local Bakery",
-      "price": 3.99,
+      "price": 3.99, 
       "rating": 4.8,
       "timeToArrive": "20 mins",
       "peopleRequired": 1,

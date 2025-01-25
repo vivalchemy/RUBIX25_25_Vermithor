@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 import { PencilIcon, Star, X } from 'lucide-react';
 
-function Reviews({ productId }: { productId: string }) {
+function Reviews({ id }: { id: string }) {
   const [showReviewSubmissionModal, setShowReviewSubmissionModal] = useState(false);
   const [newReview, setNewReview] = useState({
     rating: 5,
@@ -16,28 +16,54 @@ function Reviews({ productId }: { productId: string }) {
   const [reviewSubmissionError, setReviewSubmissionError] = useState<string | null>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [role, setRole] = useState<string | null>(null);
+  const [customerId, setCustomerId] = useState<string | null>(null)
 
   useEffect(() => {
     const storedRole = localStorage.getItem('userRole');
     setRole(storedRole);
+    const customerId = localStorage.getItem("customerId");
+    setCustomerId(customerId);
   }, []);
 
-  // Retrieve reviews from localStorage
   useEffect(() => {
-    const storedReviews = localStorage.getItem(`reviews_${productId}`);
-    if (storedReviews) {
-      setReviews(JSON.parse(storedReviews));
+    const getAllReviews = async () => {
+      const response = await axios.get(`http://localhost:8080/api/reviews/item/${id}`);
+      setReviews(response.data);
     }
-  }, [productId]);
+
+    getAllReviews();
+  }, [id])
+
+  // // Retrieve reviews from localStorage
+  // useEffect(() => {
+  //   const storedReviews = localStorage.getItem(`reviews_${productId}`);
+  //   if (storedReviews) {
+  //     setReviews(JSON.parse(storedReviews));
+  //   }
+  // }, [productId]);
 
   // Save reviews to localStorage
-  const saveReviewsToLocalStorage = (updatedReviews: any[]) => {
-    localStorage.setItem(`reviews_${productId}`, JSON.stringify(updatedReviews));
-    setReviews(updatedReviews);
-  };
-  console.log(role);
+  const saveReviewsToDB = async (updatedReview: any) => {
+    if (!id || !customerId) {
+      console.error("Item ID or Customer ID is null.");
+      setReviewSubmissionError("Failed to submit review: Missing item or customer ID.");
+      return;
+    }
 
-  // Submit a new review to the backend and save to localStorage
+    try {
+      const response = await axios.post('http://localhost:8080/api/reviews', {
+        ...updatedReview,
+        vendorId: 0, // Replace with actual vendor_id logic if needed
+        itemId: id,
+        customerId: customerId,
+      });
+      console.log("Review saved:", response.data);
+    } catch (error) {
+      console.error("Error saving review to DB:", error);
+      setReviewSubmissionError("Failed to save review to the database.");
+    }
+  };
+
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingReview(true);
@@ -49,27 +75,32 @@ function Reviews({ productId }: { productId: string }) {
         reviews: [newReview.reviewText],
       };
 
-      // Send the review to the backend
+      // Analyze review and get sentiment/confidence data
       const response = await axios.post(`http://127.0.0.1:8000/analyze_reviews/`, reviewData, {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      // Update localStorage with the backend response
-      const newReviewEntry = response.data.results[0];
-      const newRevisedEntryWithRating = { ...newReviewEntry, rating: newReview.rating };
-      const updatedReviews = [...reviews, newRevisedEntryWithRating];
-      saveReviewsToLocalStorage(updatedReviews);
+      const analyzedReview = response.data.results[0];
+      const newReviewEntry = {
+        ...analyzedReview,
+        rating: newReview.rating,
+      };
+
+      // Save the review with additional required details
+      await saveReviewsToDB(newReviewEntry);
+      window.location.reload();
 
       // Reset the form
       setNewReview({ rating: 5, reviewText: '' });
       setShowReviewSubmissionModal(false);
     } catch (error) {
-      console.error('Review submission error:', error);
-      setReviewSubmissionError('Failed to submit review. Please try again.');
+      console.error("Review submission error:", error);
+      setReviewSubmissionError("Failed to submit review. Please try again.");
     } finally {
       setIsSubmittingReview(false);
     }
   };
+
 
   return (
     <div>
@@ -97,10 +128,15 @@ function Reviews({ productId }: { productId: string }) {
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  {role === 'vendor' ? (<Badge variant="secondary">{review.gemini_suggestion}</Badge>) : (<div></div>)}
+                  {role === 'vendor' ? (<Badge variant="secondary">{review.shortText}</Badge>) : (<div></div>)}
                   <p className="text-sm text-gray-900 font-medium">{review.review}</p>
                   <p className="text-xs text-gray-500 mt-1">Rating: {review.rating}</p>
-                  {role === 'vendor' ? (<p className="text-xs text-gray-500 mt-1">Sentiment: {review.sentiment}</p>) : (<div></div>)}
+                  {role === 'vendor' ? (
+                    <>
+                      <p className="text-xs text-gray-500 mt-1">Sentiment: {review.sentiment}</p>
+                      <p className="text-xs text-gray-500 mt-1">Confidence: {review.confidence}</p>
+                    </>
+                  ) : (<div></div>)}
                 </div>
               </div>
             </CardContent>

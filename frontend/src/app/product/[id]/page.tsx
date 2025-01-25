@@ -35,14 +35,8 @@ function ProductPage() {
   const PRODUCT_INDEX = parseInt(id as string, 10);
   const [products, setProducts] = useState<ProductsType>([]);
   const [currentProduct, setCurrentProduct] = useState<ProductType | null>(null);
-  const [arLinkOfProduct, setArLinkOfProduct] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // New state for review submission
-  const [newReview, setNewReview] = useState({
-    rating: 5,
-    reviewText: '',
-  });
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -103,7 +97,7 @@ function ProductPage() {
           onClick={() => router.back()} /> Back</Button>
         {/* Product Info */}
         <ProductDetails
-          product={currentProduct}
+          id={id}
           handleAddToCart={handleAddToCart}
         />
 
@@ -111,7 +105,7 @@ function ProductPage() {
         <RelatedProducts products={relatedProducts} handleAddToCart={handleAddToCart} />
 
         {/* Reviews */}
-        <Reviews product={currentProduct as ProductType} />
+        <Reviews id={id} />
       </div>
     </>
   );
