@@ -26,10 +26,15 @@ public class Order {
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "item_id", nullable = false)
+    private Item item;
+
     private LocalDateTime orderTime;
-    private LocalDateTime deliveryTime;
     private String status;
     private Double totalPrice;
+    private Integer quantity;
 
     @JsonIgnore
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

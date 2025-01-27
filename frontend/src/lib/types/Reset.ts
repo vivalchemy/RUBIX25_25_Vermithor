@@ -35,8 +35,8 @@ export interface Order {
   orderId?: number;
   customer?: Customer;
   vendor?: Vendor;
+  item?: Item;
   orderTime: Date;
-  deliveryTime: Date;
   status: string;
   totalPrice: number;
   orderItems?: OrderItem[];

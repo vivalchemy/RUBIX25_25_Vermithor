@@ -34,8 +34,6 @@ public class OrderService {
     // Add a new order
     @Transactional
     public Order createOrder(Order order) {
-
-
         return orderRepository.save(order);
     }
 
@@ -45,7 +43,6 @@ public class OrderService {
         if (existingOrderOpt.isPresent()) {
             Order existingOrder = existingOrderOpt.get();
             existingOrder.setOrderTime(orderDetails.getOrderTime());
-            existingOrder.setDeliveryTime(orderDetails.getDeliveryTime());
             existingOrder.setStatus(orderDetails.getStatus());
             existingOrder.setTotalPrice(orderDetails.getTotalPrice());
             existingOrder.setOrderItems(orderDetails.getOrderItems());

@@ -17,7 +17,7 @@ interface CartItem {
     quantity: number
     rating: number
     timeToArrive: string
-    image: string
+    imgLink: string
 }
 
 const stripePromise = loadStripe("pk_test_51PXp2oIxKA4SqfaM2SFwVQVZBJ9bmcWnh2HgtcYashdagjEWjDthFk8Gn8Oj7wfu0jBldTMBMiE3UnUEuKkPm3mH00uW5HX8qL") // Replace with your Stripe publishable key

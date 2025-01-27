@@ -4,7 +4,9 @@ package com.foodapp.FoodApp.controller;
 import com.foodapp.FoodApp.Repo.CustomerRepo;
 import com.foodapp.FoodApp.Repo.OrderRepo;
 import com.foodapp.FoodApp.Repo.VendorRepo;
+import com.foodapp.FoodApp.Repo.ItemRepo;
 import com.foodapp.FoodApp.entities.Order;
+import com.foodapp.FoodApp.entities.Item;
 import com.foodapp.FoodApp.services.OrderService;
 import com.foodapp.FoodApp.utils.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -23,6 +26,8 @@ public class OrderController {
     private CustomerRepo customerRepository;
     @Autowired
     private VendorRepo vendorRepository;
+    @Autowired
+    private ItemRepo itemRepository;
     @Autowired
     private OrderRepo orderRepository;
     @Autowired
@@ -48,15 +53,20 @@ public class OrderController {
     @PostMapping
     public Order createOrder(@RequestBody OrderRequest orderDTO) {
         Order order = new Order();
+        Item item = itemRepository.findById(orderDTO.getItemId())
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+             
+
         order.setCustomer(customerRepository.findById(orderDTO.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found")));
         order.setVendor(vendorRepository.findById(orderDTO.getVendorId())
                 .orElseThrow(() -> new RuntimeException("Vendor not found")));
-        order.setOrderTime(orderDTO.getOrderTime());
-        order.setDeliveryTime(orderDTO.getDeliveryTime());
+        order.setItem(itemRepository.findById(orderDTO.getItemId())
+                .orElseThrow(() -> new RuntimeException("Item not found")));
+        order.setOrderTime(LocalDateTime.now());
         order.setStatus(orderDTO.getStatus());
-        order.setTotalPrice(orderDTO.getTotalPrice());
-
+        order.setTotalPrice(item.getPrice() * orderDTO.getQuantity());
+        order.setQuantity(orderDTO.getQuantity());
         return orderRepository.save(order);
     }
 

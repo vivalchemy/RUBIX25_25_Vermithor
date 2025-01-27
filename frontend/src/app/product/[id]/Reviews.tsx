@@ -137,6 +137,7 @@ function Reviews({ id }: { id: string }) {
                       <p className="text-xs text-gray-500 mt-1">Confidence: {review.confidence}</p>
                     </>
                   ) : (<div></div>)}
+                  <p className="text-xs text-gray-500 mt-1">Date: {review.reviewDate}</p>
                 </div>
               </div>
             </CardContent>

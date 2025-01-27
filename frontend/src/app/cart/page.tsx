@@ -5,8 +5,10 @@ export default function CartPage() {
     return (
         <>
             <NavBar />
-            <div className="container mx-auto mt-24 py-8">
-                <h1 className="text-2xl font-bold mb-4">Your Shopping Cart</h1>
+            <div className="container mx-auto mt-15 py-8">
+                <h2 className="text-4xl text-center font-extrabold text-gray-800 tracking-tight m-12">
+                    Your Shopping Cart
+                </h2>
                 <ShoppingCart />
             </div>
         </>

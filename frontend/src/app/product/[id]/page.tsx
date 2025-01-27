@@ -53,6 +53,25 @@ function ProductPage() {
     fetchProducts();
   }, []);
 
+  function handleAddToCart(product: ProductType) {
+      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+  
+      // Check if the product already exists in the cart
+      const existingProductIndex = cart.findIndex((item : any) => item.id === product.id);
+  
+      if (existingProductIndex >= 0) {
+        // If product already exists in cart, just update the quantity
+        cart[existingProductIndex].quantity += 1;
+      } else {
+        // Otherwise, add the product with quantity 1
+        const productWithQuantity = { ...product, quantity: 1 };
+        cart.push(productWithQuantity);
+      }
+  
+      // Save the updated cart back to localStorage
+      localStorage.setItem('cartItems', JSON.stringify(cart));
+    }
+
   useEffect(() => {
     if (products.length > 0) {
       const product = products[PRODUCT_INDEX];
@@ -65,25 +84,6 @@ function ProductPage() {
     products[PRODUCT_INDEX - 1],
     products[PRODUCT_INDEX + 1]
   ].filter(Boolean);
-
-  function handleAddToCart(product: ProductType) {
-    const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-
-    // Check if the product already exists in the cart
-    const existingProductIndex = cart.findIndex(item => item.id === product.id);
-
-    if (existingProductIndex >= 0) {
-      // If product already exists in cart, just update the quantity
-      cart[existingProductIndex].quantity += 1;
-    } else {
-      // Otherwise, add the product with quantity 1
-      const productWithQuantity = { ...product, quantity: 1 };
-      cart.push(productWithQuantity);
-    }
-
-    // Save the updated cart back to localStorage
-    localStorage.setItem('cartItems', JSON.stringify(cart));
-  }
 
   if (isLoading || !currentProduct) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -98,7 +98,6 @@ function ProductPage() {
         {/* Product Info */}
         <ProductDetails
           id={id}
-          handleAddToCart={handleAddToCart}
         />
 
         {/* Frequently Bought Together */}

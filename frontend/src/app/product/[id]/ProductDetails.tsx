@@ -16,11 +16,47 @@ const arLinks: Record<string, string> = {
   "apple": "https://mywebar.com/p/apple-"
 };
 
-function ProductDetails({ id, handleAddToCart }: { id: string, handleAddToCart: (product: ProductType) => void }) {
+function ProductDetails({ id }: { id: string }) {
   const [isLiked, setIsLiked] = useState(false);
   const [arLinkOfProduct, setArLinkOfProduct] = useState("");
   const [product, setProduct] = useState<ProductType | null>(null);
   const [vendor, setVendor] = useState<Vendor | null>(null);
+
+  // function handleAddToCart(product: ProductType) {
+  //   const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+  //   // Check if the product already exists in the cart
+  //   const existingProductIndex = cart.findIndex((item : any) => item.id === product.id);
+
+  //   if (existingProductIndex >= 0) {
+  //     // If product already exists in cart, just update the quantity
+  //     cart[existingProductIndex].quantity += 1;
+  //   } else {
+  //     // Otherwise, add the product with quantity 1
+  //     const productWithQuantity = { ...product, quantity: 1 };
+  //     cart.push(productWithQuantity);
+  //   }
+
+  //   // Save the updated cart back to localStorage
+  //   localStorage.setItem('cartItems', JSON.stringify(cart));
+  // }
+
+  async function handleAddToCart(itemId : string | undefined ) {
+    console.log(itemId)
+    try {
+      const response = await axios.post(`/api/orders`, {
+        customerId: localStorage.getItem("customerId"),
+        vendorId: vendor?.vendorId,
+        itemId: itemId,
+        status: 'pending',
+        quantity: 1,
+      });
+
+      console.log("Order successfully added:", response.data);
+    } catch (error) {
+      console.error("Error adding order:", error);
+    }
+  }
 
   useEffect(() => {
     // Fetch product details using axios
@@ -49,6 +85,8 @@ function ProductDetails({ id, handleAddToCart }: { id: string, handleAddToCart: 
     setArLinkOfProduct(arLink || "");
     console.log(arLink);
   }, []);
+
+  console.log(product);
 
   return (
 
@@ -102,7 +140,7 @@ function ProductDetails({ id, handleAddToCart }: { id: string, handleAddToCart: 
           <div className="text-2xl font-bold text-gray-900">${product?.price}</div>
 
           <div className="flex gap-3 pt-2">
-            <Button onClick={() => handleAddToCart(product)}>
+            <Button onClick={() => handleAddToCart(product?.itemId)}>
               <ShoppingCart className="mr-2 h-4 w-4" />
               Add to Cart
             </Button>

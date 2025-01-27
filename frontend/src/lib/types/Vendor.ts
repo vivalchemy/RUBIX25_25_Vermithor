@@ -1,4 +1,5 @@
 export type Vendor = {
+    vendorId: string;
     name: string;
     email: string;
     address: string;
