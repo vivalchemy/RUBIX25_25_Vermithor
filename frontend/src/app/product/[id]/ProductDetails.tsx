@@ -1,19 +1,19 @@
-"use client"
-import { Heart } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ProductType } from '@/lib/types';
-import { Clock, Rotate3d, ShoppingCart, Star, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
-import axios from 'axios';
-import { Vendor } from '@/lib/types/Vendor';
+"use client";
+import { Heart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ProductType } from "@/lib/types";
+import { Clock, Rotate3d, ShoppingCart, Star, Users } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Vendor } from "@/lib/types/Vendor";
 
 const arLinks: Record<string, string> = {
-  "banana": "https://mywebar.com/p/Banana-ud",
-  "bread": "https://mywebar.com/p/Bread",
-  "eggs": "https://mywebar.com/p/Eggs",
-  "milk": "https://mywebar.com/p/milk",
-  "apple": "https://mywebar.com/p/apple-"
+  banana: "https://mywebar.com/p/Banana-ud",
+  bread: "https://mywebar.com/p/Bread",
+  eggs: "https://mywebar.com/p/Eggs",
+  milk: "https://mywebar.com/p/milk",
+  apple: "https://mywebar.com/p/apple-",
 };
 
 function ProductDetails({ id }: { id: string }) {
@@ -21,54 +21,75 @@ function ProductDetails({ id }: { id: string }) {
   const [arLinkOfProduct, setArLinkOfProduct] = useState("");
   const [product, setProduct] = useState<ProductType | null>(null);
   const [vendor, setVendor] = useState<Vendor | null>(null);
+  const [quantity, setQuantity] = useState(0);
 
-  // function handleAddToCart(product: ProductType) {
-  //   const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-
-  //   // Check if the product already exists in the cart
-  //   const existingProductIndex = cart.findIndex((item : any) => item.id === product.id);
-
-  //   if (existingProductIndex >= 0) {
-  //     // If product already exists in cart, just update the quantity
-  //     cart[existingProductIndex].quantity += 1;
-  //   } else {
-  //     // Otherwise, add the product with quantity 1
-  //     const productWithQuantity = { ...product, quantity: 1 };
-  //     cart.push(productWithQuantity);
-  //   }
-
-  //   // Save the updated cart back to localStorage
-  //   localStorage.setItem('cartItems', JSON.stringify(cart));
-  // }
-
-  async function handleAddToCart(itemId : string | undefined ) {
-    console.log(itemId)
+  async function fetchCartDetails(itemId: string | undefined, customerId: string | undefined) {
     try {
-      const response = await axios.post(`/api/orders`, {
-        customerId: localStorage.getItem("customerId"),
-        vendorId: vendor?.vendorId,
+      const response = await axios.post(`/api/orders/by-item-and-customer`, {
         itemId: itemId,
-        status: 'pending',
-        quantity: 1,
+        customerId: customerId,
       });
-
-      console.log("Order successfully added:", response.data);
+      setQuantity(response.data.quantity || 0);
     } catch (error) {
-      console.error("Error adding order:", error);
+      console.error("Error fetching cart details:", error);
+    }
+  }
+
+  async function handleAddToCart(itemId: string | undefined) {
+    if (!itemId) return;
+    if (quantity === 0) {
+      try {
+        const response = await axios.post(`/api/orders`, {
+          customerId: localStorage.getItem("customerId"),
+          vendorId: vendor?.vendorId,
+          itemId: itemId,
+          status: "pending",
+          quantity: 1,
+        });
+        setQuantity(1); // Set initial quantity
+        console.log("Order successfully added:", response.data);
+      } catch (error) {
+        console.error("Error adding order:", error);
+      }
+    }
+  }
+
+  async function updateCartQuantity(itemId: string | undefined, newQuantity: number) {
+    if (!itemId) return;
+
+    if (newQuantity === 0) {
+      try {
+        await axios.delete(`/api/orders/${itemId}`);
+        setQuantity(0);
+        console.log("Item successfully removed from the cart");
+      } catch (error) {
+        console.error("Error removing item from cart:", error);
+      }
+    } else {
+      try {
+        await axios.put(`/api/orders/${itemId}`, {
+          quantity: newQuantity,
+          status: 'pending',
+        });
+        setQuantity(newQuantity);
+        console.log("Order quantity successfully updated");
+      } catch (error) {
+        console.error("Error updating order quantity:", error);
+      }
     }
   }
 
   useEffect(() => {
-    // Fetch product details using axios
+    // Fetch product and vendor details
     const fetchProductandVendor = async () => {
       try {
         const response = await axios.get(`/api/items/${id}`);
-        setProduct(response.data); // Set product details in state
+        setProduct(response.data);
 
         const vendorResponse = await axios.get(`/api/vendors/item/${id}`);
-        setVendor(vendorResponse.data); // Set vendor details in state
+        setVendor(vendorResponse.data);
       } catch (error) {
-        console.error('Error fetching product details:', error);
+        console.error("Error fetching product details:", error);
       }
     };
 
@@ -76,20 +97,26 @@ function ProductDetails({ id }: { id: string }) {
   }, [id]);
 
   useEffect(() => {
+    // Fetch cart details for the current product
+    const customerId = localStorage.getItem("customerId");
+    fetchCartDetails(id, customerId);
+  }, [id]);
+
+  useEffect(() => {
     // Find AR link
-    const arLink = product?.name.toLowerCase().split(" ").reduce<string | null>((link, word) => {
-      if (link) return link;  // If link is already found, return it
-      return word in arLinks ? arLinks[word] : null; // Otherwise, check the current word
-    }, null);
+    const arLink = product?.name
+      .toLowerCase()
+      .split(" ")
+      .reduce<string | null>((link, word) => {
+        if (link) return link; // If link is already found, return it
+        return word in arLinks ? arLinks[word] : null; // Otherwise, check the current word
+      }, null);
 
     setArLinkOfProduct(arLink || "");
     console.log(arLink);
-  }, []);
-
-  console.log(product);
+  }, [product]);
 
   return (
-
     <div className="grid md:grid-cols-2 gap-8 mb-12">
       <div className="relative rounded-lg overflow-hidden shadow-lg group">
         <img
@@ -103,7 +130,9 @@ function ProductDetails({ id }: { id: string }) {
           className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm hover:bg-white transition-colors duration-200"
           onClick={() => setIsLiked(!isLiked)}
         >
-          <Heart className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-700'}`} />
+          <Heart
+            className={`h-5 w-5 ${isLiked ? "fill-red-500 text-red-500" : "text-gray-700"}`}
+          />
         </Button>
       </div>
 
@@ -134,20 +163,42 @@ function ProductDetails({ id }: { id: string }) {
 
         <div className="space-y-4">
           <p className="text-gray-600 text-base leading-relaxed">
-            {product?.description || "Experience the perfect blend of flavors with our signature dish, crafted with premium ingredients and prepared to perfection."}
+            {product?.description ||
+              "Experience the perfect blend of flavors with our signature dish, crafted with premium ingredients and prepared to perfection."}
           </p>
 
           <div className="text-2xl font-bold text-gray-900">${product?.price}</div>
 
           <div className="flex gap-3 pt-2">
-            <Button onClick={() => handleAddToCart(product?.itemId)}>
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Add to Cart
-            </Button>
-            <Button variant="outline" className="px-4"
+            {quantity > 0 ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => updateCartQuantity(product?.itemId, quantity - 1)}
+                >
+                  -
+                </Button>
+                <span className="text-lg">{quantity}</span>
+                <Button
+                  variant="outline"
+                  onClick={() => updateCartQuantity(product?.itemId, quantity + 1)}
+                >
+                  +
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={() => handleAddToCart(product?.itemId)}>
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Add to Cart
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              className="px-4"
               onClick={() => {
                 window.open(`${arLinkOfProduct}`, "_blank");
-              }}>
+              }}
+            >
               <Rotate3d className="h-4 w-4" />
               View in AR
             </Button>
@@ -155,7 +206,7 @@ function ProductDetails({ id }: { id: string }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ProductDetails
+export default ProductDetails;
