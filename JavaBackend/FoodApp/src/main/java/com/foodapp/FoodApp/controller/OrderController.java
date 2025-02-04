@@ -88,4 +88,15 @@ public class OrderController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/customer/{id}")
+    public List<Order> getOrderByCustomerId(@PathVariable Long id){
+        return orderService.getOrderbyCustomerId(id);
+    }
+
+
+    @GetMapping("/customer/{customerId}/item/{itemId}")
+    public List<Order> getOrderByCustomerIdAndItemId(@PathVariable Long customerId,@PathVariable Long itemId){
+        return orderService.getOrderByCustomerIdAndItemId(customerId, itemId);
+    }
 }

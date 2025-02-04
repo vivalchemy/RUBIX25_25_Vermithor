@@ -59,4 +59,12 @@ public class OrderService {
         }
         return false;
     }
+
+    public List<Order> getOrderbyCustomerId(Long customerId){
+        return orderRepository.findByCustomer_CustomerId(customerId);
+    }
+
+    public List<Order> getOrderByCustomerIdAndItemId(Long customerId,Long itemId){
+        return orderRepository.findByCustomer_CustomerIdAndItem_ItemId(customerId, itemId);
+    }
 }
