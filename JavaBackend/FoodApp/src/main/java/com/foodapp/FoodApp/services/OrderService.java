@@ -71,6 +71,22 @@ public class OrderService {
             return orderRepository.save(existingOrder);
         }
         return null; // Handle not found scenario
+    
+    }
+    public Order updateOrderStatus(Long orderId, String status) {
+        Optional<Order> existingOrderOpt = orderRepository.findById(orderId);
+        if (existingOrderOpt.isPresent()) {
+            Order existingOrder = existingOrderOpt.get();
+            Item item = itemRepository.findById(existingOrder.getItem().getItemId())
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+            // existingOrder.setQuantity(orderQuantity);
+            // existingOrder.setTotalPrice(item.getPrice() * orderQuantity);
+            existingOrder.setOrderTime(LocalDateTime.now());
+            existingOrder.setStatus(status);
+            return orderRepository.save(existingOrder);
+        }
+        return null; // Handle not found scenario
     }
 
     // Delete an order

@@ -100,7 +100,8 @@ export default function ShoppingCart() {
 
             try {
                 const response = await axios.get(`/api/orders/customer/${customerId}`);
-                setCartItems(response.data);
+                const pendingItems = response.data.filter((item: CartItem) => item.status === 'pending');
+                setCartItems(pendingItems);
             } catch (error) {
                 console.error("Error fetching cart items:", error);
             }
@@ -133,9 +134,21 @@ export default function ShoppingCart() {
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.totalPrice, 0)
 
-    const handlePaymentSuccess = () => {
+    const handlePaymentSuccess = async () => {
+        try {
+            await Promise.all(
+                cartItems.map((item) =>
+                    axios.patch(`/api/orders/status/${item.orderId}?status=paid`)
+                )
+            );
+            console.log("Order statuses updated successfully.");
+        } catch (error) {
+            console.error("Error updating order statuses:", error);
+        }
+
         setCartItems([])
         setShowPaymentForm(false)
+
     }
 
     return (

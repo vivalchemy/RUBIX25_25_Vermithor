@@ -80,10 +80,20 @@ public class OrderController {
         return ResponseEntity.notFound().build();
     }
 
-    // Update an existing order
+    // Update an existing order with quantity and status
     @PatchMapping("/quantity/{id}")
     public ResponseEntity<Order> updateOrderQuantity(@PathVariable Long id, @RequestParam Integer quantity, @RequestParam String status) {
         Order updatedOrder = orderService.updateOrderQuantity(id, quantity, status);
+        if (updatedOrder != null) {
+            return ResponseEntity.ok(updatedOrder);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Update an existing order with status only
+    @PatchMapping("/status/{id}")
+    public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
+        Order updatedOrder = orderService.updateOrderStatus(id, status);
         if (updatedOrder != null) {
             return ResponseEntity.ok(updatedOrder);
         }
