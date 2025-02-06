@@ -21,12 +21,12 @@ public class Order {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @JsonIgnore
+    
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
-    @JsonIgnore
+    
     @OneToOne
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;

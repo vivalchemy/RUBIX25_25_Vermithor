@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface OrderRepo extends JpaRepository<Order,Long> {
     Item findByItemItemId(Long id);
     List<Order> findByCustomer_CustomerId(Long customerId);
-    List<Order> findByCustomer_CustomerIdAndItem_ItemId(Long customerId,Long ItemId);
+    Order findByCustomer_CustomerIdAndItem_ItemId(Long customerId,Long ItemId);
 }

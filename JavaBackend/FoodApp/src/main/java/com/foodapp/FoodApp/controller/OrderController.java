@@ -80,6 +80,16 @@ public class OrderController {
         return ResponseEntity.notFound().build();
     }
 
+    // Update an existing order
+    @PatchMapping("/quantity/{id}")
+    public ResponseEntity<Order> updateOrderQuantity(@PathVariable Long id, @RequestParam Integer quantity, @RequestParam String status) {
+        Order updatedOrder = orderService.updateOrderQuantity(id, quantity, status);
+        if (updatedOrder != null) {
+            return ResponseEntity.ok(updatedOrder);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     // Delete an order
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
@@ -94,9 +104,11 @@ public class OrderController {
         return orderService.getOrderbyCustomerId(id);
     }
 
+    
+
 
     @GetMapping("/customer/{customerId}/item/{itemId}")
-    public List<Order> getOrderByCustomerIdAndItemId(@PathVariable Long customerId,@PathVariable Long itemId){
+    public Order getOrderByCustomerIdAndItemId(@PathVariable Long customerId,@PathVariable Long itemId){
         return orderService.getOrderByCustomerIdAndItemId(customerId, itemId);
     }
 }

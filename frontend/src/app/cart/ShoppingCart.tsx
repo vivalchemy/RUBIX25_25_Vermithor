@@ -7,21 +7,26 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
+import { Vendor } from "@/lib/types/Reset"
+import { Item } from "@/lib/types/Reset"
 import axios from "axios"
 
 interface CartItem {
-    id: string
-    name: string
-    vendor: string
-    price: number
+    orderId: number
+    vendor: Vendor
+    item: Item
+    orderTime: string
+    status: string
+    totalPrice: number
     quantity: number
-    rating: number
-    timeToArrive: string
-    imgLink: string
 }
 
-const stripePromise = loadStripe("pk_test_51PXp2oIxKA4SqfaM2SFwVQVZBJ9bmcWnh2HgtcYashdagjEWjDthFk8Gn8Oj7wfu0jBldTMBMiE3UnUEuKkPm3mH00uW5HX8qL") // Replace with your Stripe publishable key
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_KEY;
+if (!stripeKey) {
+    throw new Error("Stripe publishable key is missing from environment variables.");
+}
 
+const stripePromise = loadStripe(stripeKey);
 const PaymentForm = ({ totalPrice, onSuccess }: { totalPrice: number; onSuccess: () => void }) => {
     const stripe = useStripe()
     const elements = useElements()
@@ -88,47 +93,48 @@ export default function ShoppingCart() {
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const [showPaymentForm, setShowPaymentForm] = useState(false)
 
-    const getLocalStorage = (key: string): any => {
-        if (typeof window !== "undefined") {
-            const item = window.localStorage.getItem(key)
-            return item ? JSON.parse(item) : null
-        }
-        return null
-    }
-
-    const setLocalStorage = (key: string, value: any): void => {
-        if (typeof window !== "undefined") {
-            window.localStorage.setItem(key, JSON.stringify(value))
-        }
-    }
-
     useEffect(() => {
-        const items = getLocalStorage("cartItems")
-        if (items) {
-            setCartItems(items)
+        const fetchCartItems = async () => {
+            const customerId = localStorage.getItem("customerId");
+            if (!customerId) return;
+
+            try {
+                const response = await axios.get(`/api/orders/customer/${customerId}`);
+                setCartItems(response.data);
+            } catch (error) {
+                console.error("Error fetching cart items:", error);
+            }
         }
+
+        fetchCartItems();
     }, [])
 
-    const removeFromCart = (id: string) => {
-        const updatedCart = cartItems.filter((item) => item.id !== id)
-        setCartItems(updatedCart)
-        setLocalStorage("cartItems", updatedCart)
+    const updateQuantity = async (item: CartItem | undefined, newQuantity: number) => {
+        if (!item?.orderId) return;
+
+        if (newQuantity === 0) {
+            try {
+                await axios.delete(`/api/orders/${item.orderId}`);
+                console.log("Item successfully removed from the cart");
+                window.location.reload();
+            } catch (error) {
+                console.error("Error removing item from cart:", error);
+            }
+        } else {
+            try {
+                await axios.patch(`/api/orders/quantity/${item.orderId}?quantity=${newQuantity}&status=pending`);
+                console.log("Order quantity successfully updated");
+                window.location.reload();
+              } catch (error) {
+                console.error("Error updating order quantity:", error);
+              }
+        }
     }
 
-    const updateQuantity = (id: string, newQuantity: number) => {
-        if (newQuantity < 1) return
-        const updatedCart = cartItems.map((item) =>
-            item.id === id ? { ...item, quantity: newQuantity } : item
-        )
-        setCartItems(updatedCart)
-        setLocalStorage("cartItems", updatedCart)
-    }
-
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.totalPrice, 0)
 
     const handlePaymentSuccess = () => {
         setCartItems([])
-        setLocalStorage("cartItems", [])
         setShowPaymentForm(false)
     }
 
@@ -143,22 +149,22 @@ export default function ShoppingCart() {
                 ) : (
                     <ul className="space-y-4">
                         {cartItems.map((item) => (
-                            <li key={item.id} className="flex items-center justify-between border-b pb-4">
+                            <li key={item.orderId} className="flex items-center justify-between border-b pb-4">
                                 <div className="flex items-center space-x-4">
-                                    <img src={item.imgLink} alt={item.name} className="w-16 h-16 object-cover" />
+                                    <img src={item.item.imgLink} alt={item.item.name} className="w-16 h-16 object-cover" />
                                     <div>
-                                        <h3 className="font-semibold">{item.name}</h3>
-                                        <p className="text-sm text-gray-500">Vendor: {item.vendor}</p>
-                                        <p className="text-sm text-gray-500">Rating: {item.rating} ★</p>
-                                        <p className="text-sm text-gray-500">Time to Arrive: {item.timeToArrive}</p>
-                                        <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
+                                        <h3 className="font-semibold">{item.item.name}</h3>
+                                        <p className="text-sm text-gray-500">Vendor: {item.vendor.shopName}</p>
+                                        <p className="text-sm text-gray-500">Rating: {item.item.rating} ★</p>
+                                        <p className="text-sm text-gray-500">Time to Arrive: {item.item.timeToArrive} min</p>
+                                        <p className="text-sm text-gray-500">${item.item.price.toFixed(2)}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <Button
                                         variant="outline"
                                         size="icon"
-                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                        onClick={() => updateQuantity(item, item.quantity - 1)}
                                     >
                                         -
                                     </Button>
@@ -166,14 +172,14 @@ export default function ShoppingCart() {
                                     <Button
                                         variant="outline"
                                         size="icon"
-                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                        onClick={() => updateQuantity(item, item.quantity + 1)}
                                     >
                                         +
                                     </Button>
                                     <Button
                                         variant="destructive"
                                         size="icon"
-                                        onClick={() => removeFromCart(item.id)}
+                                        onClick={() => updateQuantity(item, 0)}
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </Button>

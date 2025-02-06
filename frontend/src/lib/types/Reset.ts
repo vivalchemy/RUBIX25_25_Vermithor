@@ -23,12 +23,15 @@ export interface Vendor {
 }
 
 export interface Item {
-  itemId?: number;
-  name: string;
-  price: number;
-  category: string;
-  rating: number;
-  vendor?: Vendor;
+  itemId: number
+  name: string
+  price: number
+  category: string
+  rating: number
+  description: string
+  imgLink: string
+  timeToArrive: number
+  peopleRequired: number
 }
 
 export interface Order {

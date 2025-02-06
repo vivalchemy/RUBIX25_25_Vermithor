@@ -22,14 +22,14 @@ function ProductDetails({ id }: { id: string }) {
   const [product, setProduct] = useState<ProductType | null>(null);
   const [vendor, setVendor] = useState<Vendor | null>(null);
   const [quantity, setQuantity] = useState(0);
+  const [orderId, setOrderId] = useState(0);
 
-  async function fetchCartDetails(itemId: string | undefined, customerId: string | undefined) {
+  async function fetchCartDetails(itemId: string | undefined, customerId: string | null) {
     try {
-      const response = await axios.post(`/api/orders/by-item-and-customer`, {
-        itemId: itemId,
-        customerId: customerId,
-      });
+      const response = await axios.get(`/api/orders/customer/${customerId}/item/${itemId}`);
+      console.log(response.data.quantity);
       setQuantity(response.data.quantity || 0);
+      setOrderId(response.data.orderId || 0);
     } catch (error) {
       console.error("Error fetching cart details:", error);
     }
@@ -59,7 +59,7 @@ function ProductDetails({ id }: { id: string }) {
 
     if (newQuantity === 0) {
       try {
-        await axios.delete(`/api/orders/${itemId}`);
+        await axios.delete(`/api/orders/${orderId}`);
         setQuantity(0);
         console.log("Item successfully removed from the cart");
       } catch (error) {
@@ -67,12 +67,10 @@ function ProductDetails({ id }: { id: string }) {
       }
     } else {
       try {
-        await axios.put(`/api/orders/${itemId}`, {
-          quantity: newQuantity,
-          status: 'pending',
-        });
+        await axios.patch(`/api/orders/quantity/${orderId}?quantity=${newQuantity}&status=pending`);
         setQuantity(newQuantity);
         console.log("Order quantity successfully updated");
+        window.location.reload();
       } catch (error) {
         console.error("Error updating order quantity:", error);
       }
