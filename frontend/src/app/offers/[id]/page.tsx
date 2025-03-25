@@ -3,10 +3,26 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Heart, ShoppingCart, Rotate3d } from 'lucide-react';
-import { OffersType } from '@/lib/types';
 import { useParams } from 'next/navigation';
 import NavBar from '@/components/home/NavBar';
 import Image from 'next/image';
+
+type ProductType = {
+  id: string;
+  name: string;
+  price: number;
+  rating: number;
+};
+
+type OfferType = {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  products: ProductType[];
+};
+
+type OffersType = OfferType[];
 
 function OfferPage() {
   const { id } = useParams<{ id: string }>();
@@ -45,7 +61,7 @@ function OfferPage() {
     const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
 
     // Check if the product already exists in the cart
-    const existingProductIndex = cart.findIndex(item => item.id === product.id);
+    const existingProductIndex = cart.findIndex((item: { id: string; }) => item.id === product.id);
 
     if (existingProductIndex >= 0) {
       // If product already exists in cart, just update the quantity
