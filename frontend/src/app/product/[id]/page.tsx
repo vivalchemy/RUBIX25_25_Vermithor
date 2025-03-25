@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon, X } from 'lucide-react';
+import { ChevronLeftIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/home/NavBar';
@@ -9,14 +9,6 @@ import Reviews from './Reviews';
 import RelatedProducts from './RelatedProducts';
 import ProductDetails from './ProductDetails';
 import { Product } from '@/lib/types/Reset';
-
-const arLinks: Record<string, string> = {
-  "banana": "https://mywebar.com/p/Banana-ud",
-  "bread": "https://mywebar.com/p/Bread",
-  "eggs": "https://mywebar.com/p/Eggs",
-  "milk": "https://mywebar.com/p/milk",
-  "apple": "https://mywebar.com/p/apple-"
-};
 
 function ProductPage() {
   const router = useRouter();

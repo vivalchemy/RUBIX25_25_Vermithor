@@ -7,6 +7,7 @@ import { Clock, Rotate3d, ShoppingCart, Star, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Vendor } from "@/lib/types/Reset";
+import Image from "next/image";
 
 const arLinks: Record<string, string> = {
   banana: "https://mywebar.com/p/Banana-ud",
@@ -117,9 +118,9 @@ function ProductDetails({ id }: { id: string }) {
   return (
     <div className="grid md:grid-cols-2 gap-8 mb-12">
       <div className="relative rounded-lg overflow-hidden shadow-lg group">
-        <img
+        <Image
           src={product?.imgLink || "/api/placeholder/800/600"}
-          alt={product?.name}
+          alt={product?.name || "Product image"}
           className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <Button

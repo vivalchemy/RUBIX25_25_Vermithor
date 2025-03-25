@@ -1,6 +1,7 @@
 import { useRef, useState, ChangeEvent, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Upload, X, Camera } from 'lucide-react'
+import Image from 'next/image'
 
 interface ImagePreviewProps {
   selectedImage: string | null
@@ -39,7 +40,7 @@ export function ImagePreview({
     <div className='w-[70%]'>
       {selectedImage ? (
         <div className="relative w-full h-full">
-          <img src={selectedImage} alt="Uploaded" className="w-full h-full object-contain" />
+          <Image src={selectedImage} alt="Uploaded" className="w-full h-full object-contain" />
           <Button
             variant="destructive"
             size="icon"

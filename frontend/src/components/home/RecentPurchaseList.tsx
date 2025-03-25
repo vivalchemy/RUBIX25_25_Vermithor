@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Clock, Loader2 } from "lucide-react";
 import { Product } from "@/lib/types/Reset";
+import Image from "next/image";
 
 export default function RecentProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -71,7 +72,7 @@ export default function RecentProducts() {
               <CardContent className="p-0">
                 {/* Image Container */}
                 <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
-                  <img
+                  <Image
                     src={product.imgLink || "/placeholder.svg"}
                     alt={product.name}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

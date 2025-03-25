@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import type { OrdersType, ProductsType } from "@/lib/types"
 import { ScrollArea } from "../ui/scroll-area"
 import { Order } from "@/lib/types/Reset"
 

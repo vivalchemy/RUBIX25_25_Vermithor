@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Product } from '@/lib/types/Reset'
 import React from 'react'
+import Image from 'next/image'
 
 function RelatedProducts({ products, handleAddToCart }: { products: Product[], handleAddToCart: (product: Product) => void }) {
   return (
@@ -13,7 +14,7 @@ function RelatedProducts({ products, handleAddToCart }: { products: Product[], h
           <Card key={product.itemId} className="overflow-hidden hover:shadow-md transition-shadow duration-300">
             <CardContent className="p-0">
               <div className="flex items-center">
-                <img
+                <Image
                   src={product.imgLink || "/api/placeholder/200/200"}
                   alt={product.name}
                   className="w-24 h-24 object-cover"

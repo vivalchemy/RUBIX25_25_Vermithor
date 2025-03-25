@@ -1,15 +1,6 @@
-import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Star } from "lucide-react"
 import { Order } from "@/lib/types/Reset"
-
-interface Dish {
-  id: number
-  name: string
-  status: string
-  rating: number
-}
 
 interface DishListProps {
   dishes: Order[]

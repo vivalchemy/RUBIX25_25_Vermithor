@@ -10,17 +10,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"; // Import Popover
 import { useRouter } from 'next/navigation';
 
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  address: string;
-  phone: string;
-  shopName: string;
-  location_lat: number;
-  location_lon: number;
-};
-
 export function SignUpForm({
   className,
   setLoginState,

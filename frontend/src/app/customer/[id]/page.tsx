@@ -20,6 +20,9 @@ export default function Customer() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!id) return;
+
+    setLoading(true);
     axios
       .get(`/api/customers/${id}`)
       .then((response) => {
@@ -33,10 +36,11 @@ export default function Customer() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
-
+  }, [id]);
 
   useEffect(() => {
+    if (!id) return;
+
     const fetchCartItems = async () => {
       try {
         const response = await axios.get(`/api/orders/customer/${id}`);
@@ -49,19 +53,15 @@ export default function Customer() {
       }
       finally {
         setLoading(false);
-      };
-    }
+      }
+    };
 
     fetchCartItems();
-  }, []);
-
-  useEffect(() => {
-    const pendingOrders = orders?.filter(order => order.status === 'pending' || order.status === 'processing')
-  }, [orders])
+  }, [id]);
 
   const handleCustomerUpdate = (updatedCustomer: Customer) => {
-    // setCustomer(updatedCustomer)
-  }
+    setCustomer(updatedCustomer);
+  };
 
   if (loading) {
     return (
@@ -105,5 +105,3 @@ export default function Customer() {
     </>
   )
 }
-
-

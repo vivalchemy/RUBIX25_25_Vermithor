@@ -84,7 +84,7 @@ export default function HomePage() {
   const generateAndUploadImageFile = async (imageDataUrl: string) => {
     imageDataUrl = imageDataUrl.split(',')[1] || imageDataUrl;
     console.log(imageDataUrl);
-    let filename = 'image.jpeg';
+    const filename = 'image.jpeg';
     const binaryData = atob(imageDataUrl);
     const arrayBuffer = new ArrayBuffer(binaryData.length);
     const uint8Array = new Uint8Array(arrayBuffer);

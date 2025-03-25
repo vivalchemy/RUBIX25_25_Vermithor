@@ -58,9 +58,12 @@ export interface Review {
   reviewId?: number;
   customer?: Customer;
   vendor?: Vendor;
-  reviewText: string;
+  review: string;
   rating: number;
   reviewDate: Date;
+  confidence: number;
+  sentiment: string;
+  shortText: string;
 }
 
 export interface Product {

@@ -2,12 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Users, Heart, ShoppingCart, Rotate3d } from 'lucide-react';
-import { OfferType, OffersType } from '@/lib/types';
+import { Star, Heart, ShoppingCart, Rotate3d } from 'lucide-react';
+import { OffersType } from '@/lib/types';
 import { useParams } from 'next/navigation';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
 import NavBar from '@/components/home/NavBar';
+import Image from 'next/image';
 
 function OfferPage() {
   const { id } = useParams<{ id: string }>();
@@ -69,7 +68,7 @@ function OfferPage() {
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {/* Offer Image */}
           <div className="relative rounded-lg overflow-hidden shadow-lg group">
-            <img
+            <Image
               src={currentOffer.image || "/api/placeholder/800/600"}
               alt={currentOffer.title}
               className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-300"
@@ -144,7 +143,7 @@ function OfferPage() {
               <Card key={offer.id} className="overflow-hidden hover:shadow-md transition-shadow duration-300">
                 <CardContent className="p-0">
                   <div className="flex items-center">
-                    <img
+                    <Image
                       src={offer.image || "/api/placeholder/200/200"}
                       alt={offer.title}
                       className="w-24 h-24 object-cover"

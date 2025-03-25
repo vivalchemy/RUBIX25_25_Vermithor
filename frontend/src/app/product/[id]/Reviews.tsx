@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 import { PencilIcon, Star, X } from 'lucide-react';
+import { Review } from '@/lib/types/Reset';
 
 function Reviews({ id }: { id: string }) {
   const [showReviewSubmissionModal, setShowReviewSubmissionModal] = useState(false);
@@ -14,7 +15,7 @@ function Reviews({ id }: { id: string }) {
   });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewSubmissionError, setReviewSubmissionError] = useState<string | null>(null);
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [role, setRole] = useState<string | null>(null);
   const [customerId, setCustomerId] = useState<string | null>(null)
 
@@ -34,7 +35,7 @@ function Reviews({ id }: { id: string }) {
     getAllReviews();
   }, [id])
 
-  const saveReviewsToDB = async (updatedReview: any) => {
+  const saveReviewsToDB = async (updatedReview: Review) => {
     if (!id || !customerId) {
       console.error("Item ID or Customer ID is null.");
       setReviewSubmissionError("Failed to submit review: Missing item or customer ID.");
@@ -128,7 +129,7 @@ function Reviews({ id }: { id: string }) {
                       <p className="text-xs text-gray-500 mt-1">Confidence: {review.confidence}</p>
                     </>
                   ) : (<div></div>)}
-                  <p className="text-xs text-gray-500 mt-1">Date: {review.reviewDate}</p>
+                  <p className="text-xs text-gray-500 mt-1">Date: {review.reviewDate.toLocaleDateString()}</p>
                 </div>
               </div>
             </CardContent>

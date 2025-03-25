@@ -11,7 +11,7 @@ import NavBar from "@/components/home/NavBar";
 import { Product } from "@/lib/types/Reset";
 
 export default function Search() {
-  let searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

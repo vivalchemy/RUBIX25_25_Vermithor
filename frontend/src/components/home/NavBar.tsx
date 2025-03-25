@@ -9,7 +9,7 @@ export default function NavBar() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [roleCheck, setRoleCheck] = useState('')
-  const [customerCheck, setCustomerCheck] = useState('')
+  const [ , setCustomerCheck] = useState('')
   const [vendorCheck, setVendorCheck] = useState('')
 
   useEffect(() => {
@@ -47,9 +47,9 @@ export default function NavBar() {
   };
 
   const handleDashboard = () => {
-    let role = localStorage.getItem("userRole");
-    let customerId = localStorage.getItem("customerId");
-    let vendorId = localStorage.getItem("vendorId");
+    const role = localStorage.getItem("userRole");
+    const customerId = localStorage.getItem("customerId");
+    const vendorId = localStorage.getItem("vendorId");
 
     if (role === "customer" && customerId) {
       // Redirect to customer dashboard with customerId

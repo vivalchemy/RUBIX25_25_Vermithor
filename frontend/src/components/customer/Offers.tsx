@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Loader2 } from "lucide-react";
 import type { OffersType } from "@/lib/types";
+import Image from "next/image"
 
 export function Offers() {
   const [offers, setOffers] = useState<OffersType>([]);
@@ -81,7 +82,7 @@ export function Offers() {
                   <CardContent className="p-0">
                     {/* Image Container */}
                     <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
-                      <img
+                      <Image
                         src={offer.image || "/placeholder.svg"}
                         alt={offer.title}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
