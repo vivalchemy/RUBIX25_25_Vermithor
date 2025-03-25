@@ -11,7 +11,7 @@ import { Vendor } from "@/lib/types/Reset"
 import { Item } from "@/lib/types/Reset"
 import axios from "axios"
 
-interface CartItem {
+export interface CartItem {
     orderId: number
     vendor: Vendor
     item: Item
@@ -54,7 +54,7 @@ const PaymentForm = ({ totalPrice, onSuccess }: { totalPrice: number; onSuccess:
             }
 
             // Make a payment request
-            const response = await axios.post("http://localhost:8080/payments/charge", {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/payments/charge`, {
                 paymentMethodId: paymentMethod.id,
                 amount: totalPrice * 100, // Amount in cents
                 currency: "usd", // Currency

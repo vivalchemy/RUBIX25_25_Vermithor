@@ -90,8 +90,8 @@ export function SignUpForm({
 
     try {
       const url = role === 'customer'
-        ? 'http://localhost:8080/api/customers'
-        : 'http://localhost:8080/api/vendors';
+        ? `${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/customers`
+        : `${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/vendors`;
 
       const payload = role === 'customer'
         ? {

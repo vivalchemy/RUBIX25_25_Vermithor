@@ -11,6 +11,7 @@ export interface Customer {
 export interface Vendor {
   vendorId?: number;
   name: string;
+  email: string;
   password: string;
   address: string;
   shopName: string;
@@ -20,7 +21,7 @@ export interface Vendor {
   items?: Item[];
   orders?: Order[];
   reviews?: Review[];
-}
+} 
 
 export interface Item {
   itemId: number
@@ -60,4 +61,17 @@ export interface Review {
   reviewText: string;
   rating: number;
   reviewDate: Date;
+}
+
+export interface Product {
+  description: string;
+  itemId: string;
+  imgLink: string;
+  name: string;
+  peopleRequired: number;
+  price: number;
+  rating: number;
+  serves: number;
+  timeToArrive: string;
+  vendor: string
 }

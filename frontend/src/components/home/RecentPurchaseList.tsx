@@ -5,10 +5,10 @@ import axios from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Clock, Loader2 } from "lucide-react";
-import type { ProductsType } from "@/lib/types";
+import { Product } from "@/lib/types/Reset";
 
 export default function RecentProducts() {
-  const [products, setProducts] = useState<ProductsType>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,14 +65,14 @@ export default function RecentProducts() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {products.slice(0, 6).map((product) => (
             <Card
-              key={product.id}
+              key={product.itemId}
               className="overflow-hidden shadow-md rounded-xl transition-all duration-300 hover:shadow-xl group"
             >
               <CardContent className="p-0">
                 {/* Image Container */}
                 <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
                   <img
-                    src={product.image || "/placeholder.svg"}
+                    src={product.imgLink || "/placeholder.svg"}
                     alt={product.name}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />

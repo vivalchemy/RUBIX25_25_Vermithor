@@ -35,8 +35,8 @@ export function LoginForm({
     e.preventDefault();
     try {
       const url = role === 'customer'
-        ? 'http://localhost:8080/api/customers/login'
-        : 'http://localhost:8080/api/vendors/login';
+        ? `${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/customers/login`
+        : `${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/vendors/login`;
 
       const response = await axios.post(url, formData);
 

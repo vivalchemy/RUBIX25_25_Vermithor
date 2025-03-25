@@ -2,11 +2,11 @@
 import { Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ProductType } from "@/lib/types";
+import { Product } from "@/lib/types/Reset";
 import { Clock, Rotate3d, ShoppingCart, Star, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Vendor } from "@/lib/types/Vendor";
+import { Vendor } from "@/lib/types/Reset";
 
 const arLinks: Record<string, string> = {
   banana: "https://mywebar.com/p/Banana-ud",
@@ -19,7 +19,7 @@ const arLinks: Record<string, string> = {
 function ProductDetails({ id }: { id: string }) {
   const [isLiked, setIsLiked] = useState(false);
   const [arLinkOfProduct, setArLinkOfProduct] = useState("");
-  const [product, setProduct] = useState<ProductType | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [vendor, setVendor] = useState<Vendor | null>(null);
   const [quantity, setQuantity] = useState(0);
   const [orderId, setOrderId] = useState(0);

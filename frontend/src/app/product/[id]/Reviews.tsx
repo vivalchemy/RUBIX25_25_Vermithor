@@ -27,22 +27,13 @@ function Reviews({ id }: { id: string }) {
 
   useEffect(() => {
     const getAllReviews = async () => {
-      const response = await axios.get(`http://localhost:8080/api/reviews/item/${id}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/reviews/item/${id}`);
       setReviews(response.data);
     }
 
     getAllReviews();
   }, [id])
 
-  // // Retrieve reviews from localStorage
-  // useEffect(() => {
-  //   const storedReviews = localStorage.getItem(`reviews_${productId}`);
-  //   if (storedReviews) {
-  //     setReviews(JSON.parse(storedReviews));
-  //   }
-  // }, [productId]);
-
-  // Save reviews to localStorage
   const saveReviewsToDB = async (updatedReview: any) => {
     if (!id || !customerId) {
       console.error("Item ID or Customer ID is null.");
@@ -51,9 +42,9 @@ function Reviews({ id }: { id: string }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/reviews', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/reviews`, {
         ...updatedReview,
-        vendorId: 0, // Replace with actual vendor_id logic if needed
+        vendorId: 0, 
         itemId: id,
         customerId: customerId,
       });

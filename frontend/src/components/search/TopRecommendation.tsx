@@ -3,10 +3,10 @@ import { Clock, Star } from "lucide-react"
 
 import { Button } from "../ui/button"
 import { useRouter } from "next/navigation";
-import { ProductsType } from "@/lib/types";
+import { Product } from "@/lib/types/Reset";
 
 // TODO: Remove - 1 from product id
-export function TopRecommendations({ products }: { products: ProductsType }) {
+export function TopRecommendations({ products }: { products: Product[] }) {
   const router = useRouter();
   return (
     <div className="space-y-4">
@@ -15,15 +15,15 @@ export function TopRecommendations({ products }: { products: ProductsType }) {
 
         {products.map((product) => (
           <Card
-            key={product.id}
+            key={product.itemId}
             className="overflow-hidden shadow-md rounded-xl transition-all duration-300 hover:shadow-xl group"
-            onClick={() => router.push(`/product/${product.id - 1}`)}
+            onClick={() => router.push(`/product/${product.itemId - 1}`)}
           >
             <CardContent className="p-0">
               {/* Image Container */}
               <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
                 <img
-                  src={product.image || "/placeholder.svg"}
+                  src={product.imgLink || "/placeholder.svg"}
                   alt={product.name}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />

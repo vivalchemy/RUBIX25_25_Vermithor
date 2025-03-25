@@ -2,17 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { OrdersType, ProductsType } from "@/lib/types"
 import { ScrollArea } from "../ui/scroll-area"
+import { Order } from "@/lib/types/Reset"
 
 interface RecentOrdersProps {
-  orders: OrdersType
-  products: ProductsType
+  orders: Order[]
 }
 
-export function RecentOrders({ orders, products }: RecentOrdersProps) {
-  const getProductName = (productId: string) => {
-    const product = products.find((p) => p.id === productId)
-    return product ? product.name : "Unknown Product"
-  }
+export function RecentOrders({ orders }: RecentOrdersProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -38,15 +34,15 @@ export function RecentOrders({ orders, products }: RecentOrdersProps) {
         <ScrollArea className="h-full w-full leading-relaxed">
           <div className="space-y-4">
             {orders.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={order.orderId} className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
-                  <h3 className="font-semibold">Order #{order.id}</h3>
-                  <p className="text-sm text-gray-600">{order.productIds.map((id) => getProductName(id)).join(", ")}</p>
+                  <h3 className="font-semibold">Order #{order.orderId}</h3>
+                  <p className="text-sm text-gray-600">{order.item?.name}</p>
                   <p className="text-sm text-gray-600">Total: ${order.totalPrice.toFixed(2)}</p>
                 </div>
                 <div className="text-right">
                   <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
-                  <p className="text-sm text-gray-600 mt-1">{order.timeToArrive}</p>
+                  <p className="text-sm text-gray-600 mt-1">{new Date(order.orderTime).toLocaleDateString()}</p>
                 </div>
               </div>
             ))}

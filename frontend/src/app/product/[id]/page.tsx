@@ -3,12 +3,12 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { ProductType, ProductsType } from '@/lib/types';
 import { useParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/home/NavBar';
 import Reviews from './Reviews';
 import RelatedProducts from './RelatedProducts';
 import ProductDetails from './ProductDetails';
+import { Product } from '@/lib/types/Reset';
 
 const arLinks: Record<string, string> = {
   "banana": "https://mywebar.com/p/Banana-ud",
@@ -18,23 +18,12 @@ const arLinks: Record<string, string> = {
   "apple": "https://mywebar.com/p/apple-"
 };
 
-interface CartItem {
-  id: string
-  name: string
-  vendor: string
-  price: number
-  quantity: number
-  rating: number
-  timeToArrive: string
-  image: string
-}
-
 function ProductPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const PRODUCT_INDEX = parseInt(id as string, 10);
-  const [products, setProducts] = useState<ProductsType>([]);
-  const [currentProduct, setCurrentProduct] = useState<ProductType | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -53,11 +42,11 @@ function ProductPage() {
     fetchProducts();
   }, []);
 
-  function handleAddToCart(product: ProductType) {
+  function handleAddToCart(product: Product) {
       const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
   
       // Check if the product already exists in the cart
-      const existingProductIndex = cart.findIndex((item : any) => item.id === product.id);
+      const existingProductIndex = cart.findIndex((item : any) => item.id === product.itemId);
   
       if (existingProductIndex >= 0) {
         // If product already exists in cart, just update the quantity

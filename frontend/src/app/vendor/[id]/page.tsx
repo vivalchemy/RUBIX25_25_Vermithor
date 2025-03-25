@@ -80,7 +80,7 @@ export default function VendorDashboard() {
   useEffect(() => {
     setLoading(true);
     axios
-      .post("http://localhost:8000/predict-food", {
+      .post(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/predict-food`, {
         last_7_days_data: [
           [0, 0, 0],
           [0, 0, 0],

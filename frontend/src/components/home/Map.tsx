@@ -55,7 +55,7 @@ export default function Map() {
     // Fetch vendors
     const fetchVendors = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/vendors");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/vendors`);
         setVendors(response.data); // Assuming the response contains an array of vendors
       } catch (error) {
         console.error("Error fetching vendors:", error);
@@ -111,7 +111,7 @@ export default function Map() {
 
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8000/directions", {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/directions`, {
         params: {
           origin_lat: originCoords[0],
           origin_lon: originCoords[1],

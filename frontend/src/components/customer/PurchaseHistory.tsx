@@ -1,17 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { OrdersType, ProductsType } from "@/lib/types"
+import { Order } from "@/lib/types/Reset"
 
 interface PurchaseHistoryProps {
-  orders: OrdersType
-  products: ProductsType
+  orders: Order[]
 }
 
-export function PurchaseHistory({ orders, products }: PurchaseHistoryProps) {
-  const getProductName = (productId: string) => {
-    const product = products.find((p) => p.id === productId)
-    return product ? product.name : "Unknown Product"
-  }
-
+export function PurchaseHistory({ orders }: PurchaseHistoryProps) {
   return (
     <Card>
       <CardHeader>
@@ -30,11 +24,11 @@ export function PurchaseHistory({ orders, products }: PurchaseHistoryProps) {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="border-t">
-                <td className="py-2">{order.id}</td>
-                <td className="py-2">{order.productIds.map((id) => getProductName(id)).join(", ")}</td>
+              <tr key={order.orderId} className="border-t">
+                <td className="py-2">{order.orderId}</td>
+                <td className="py-2">{order.item?.name}</td>
                 <td className="py-2">${order.totalPrice.toFixed(2)}</td>
-                <td className="py-2">{order.orderDate}</td>
+                <td className="py-2">{new Date(order.orderTime).toLocaleDateString()}</td>
                 <td className="py-2">{order.status}</td>
               </tr>
             ))}

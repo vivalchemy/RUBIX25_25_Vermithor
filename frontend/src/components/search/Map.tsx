@@ -28,7 +28,7 @@ export function Map({ products }: { products: any[] }) {
       try {
         const vendorData = await Promise.all(
           products.map(async (product) => {
-            const response = await axios.get(`http://localhost:8080/api/vendors/item/${product.id}`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/vendors/item/${product.id}`);
             return {
               latitude: response.data.location_lat,
               longitude: response.data.location_lon,

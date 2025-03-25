@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import type { CustomerType } from "@/lib/types"
 import { Pen } from "lucide-react"
+import { Customer } from "@/lib/types/Reset"
 
 interface CustomerDetailsProps {
-  customer: CustomerType
-  onUpdate: (customer: CustomerType) => void
+  customer: Customer
+  onUpdate: (customer: Customer) => void
 }
 
 export function Details({ customer, onUpdate }: CustomerDetailsProps) {
