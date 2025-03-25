@@ -78,3 +78,8 @@ export interface Product {
   timeToArrive: string;
   vendor: string
 }
+
+export interface CartItem extends Product {
+  id: string;
+  quantity: number;
+}

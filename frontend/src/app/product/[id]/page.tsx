@@ -9,6 +9,7 @@ import Reviews from './Reviews';
 import RelatedProducts from './RelatedProducts';
 import ProductDetails from './ProductDetails';
 import { Product } from '@/lib/types/Reset';
+import { CartItem } from '@/lib/types/Reset';
 
 function ProductPage() {
   const router = useRouter();
@@ -35,17 +36,17 @@ function ProductPage() {
   }, []);
 
   function handleAddToCart(product: Product) {
-      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const cart: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
   
       // Check if the product already exists in the cart
-      const existingProductIndex = cart.findIndex((item : any) => item.id === product.itemId);
+      const existingProductIndex = cart.findIndex((item: CartItem) => item.id === product.itemId);
   
       if (existingProductIndex >= 0) {
         // If product already exists in cart, just update the quantity
         cart[existingProductIndex].quantity += 1;
       } else {
         // Otherwise, add the product with quantity 1
-        const productWithQuantity = { ...product, quantity: 1 };
+        const productWithQuantity = { ...product, id: product.itemId, quantity: 1 };
         cart.push(productWithQuantity);
       }
   

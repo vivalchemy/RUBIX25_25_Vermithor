@@ -12,7 +12,7 @@ interface MainContentProps {
   handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   openCamera: () => void;
   cameraPermission: PermissionState | null;
-  handleSubmitForm: (formData: any) => void;
+  handleSubmitForm: (formData: Record<string, unknown>) => void;
 }
 
 export function MainContent({
@@ -23,10 +23,10 @@ export function MainContent({
   cameraPermission,
   handleSubmitForm,
 }: MainContentProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showAnalysis, setShowAnalysis] = useState<boolean>(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleRunAnalysis = async () => {
     if (!selectedImage) {
@@ -41,16 +41,14 @@ export function MainContent({
     try {
       const formData = new FormData();
 
-      if (selectedImage) {
-        if (selectedImage.startsWith('data:image')) {
-          const response = await fetch(selectedImage);
-          const blob = await response.blob();
-          formData.append('file', blob, 'uploaded-image.jpg');
-        } else {
-          const response = await fetch(selectedImage);
-          const blob = await response.blob();
-          formData.append('file', blob, 'uploaded-image.jpg');
-        }
+      if (selectedImage.startsWith('data:image')) {
+        const response = await fetch(selectedImage);
+        const blob = await response.blob();
+        formData.append('file', blob, 'uploaded-image.jpg');
+      } else {
+        const response = await fetch(selectedImage);
+        const blob = await response.blob();
+        formData.append('file', blob, 'uploaded-image.jpg');
       }
 
       const response = await fetch('http://127.0.0.1:8000/process-image/', {
@@ -64,69 +62,57 @@ export function MainContent({
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
-      const data = await response.json();
+      const data: { result: string } = await response.json();
       console.log('Prediction response:', data);
 
-      // Set analysis result and show analysis
       setAnalysisResult(data.result);
       handleSubmitForm(data);
 
       setIsLoading(false);
       setShowAnalysis(true);
-
     } catch (error) {
       console.error('Full Prediction Error:', error);
       setIsLoading(false);
-      if (error instanceof Error) {
-        alert(`Prediction failed: ${error.message}`);
-      } else {
-        alert('Prediction failed: An unknown error occurred.');
-      }
+      alert(`Prediction failed: ${(error as Error).message || 'An unknown error occurred.'}`);
     }
   };
 
   return (
     <div className="space-y-4">
-      <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Button onClick={() => router.push("/")}> <ChevronLeft /> </Button>
+            <CardTitle>Image Preview</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ImagePreview
+            selectedImage={selectedImage}
+            onImageRemove={handleRemoveImage}
+            onImageUpload={handleImageUpload}
+            openCamera={openCamera}
+            cameraPermission={cameraPermission}
+          />
+        </CardContent>
+      </Card>
+
+      <Button onClick={handleRunAnalysis} disabled={isLoading} className="w-full">
+        {isLoading ? "Analyzing..." : "Run Analysis"}
+      </Button>
+
+      {showAnalysis && analysisResult && (
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-3">
-              <Button onClick={() => router.push("/")}>
-                <ChevronLeft />
-              </Button>
-              <CardTitle>Image Preview</CardTitle>
-            </div>
+            <CardTitle>Analysis Result</CardTitle>
           </CardHeader>
           <CardContent>
-            <ImagePreview
-              selectedImage={selectedImage}
-              onImageRemove={handleRemoveImage}
-              onImageUpload={handleImageUpload}
-              openCamera={openCamera}
-              cameraPermission={cameraPermission}
-            />
+            <div className="whitespace-pre-wrap">
+              <ReactMarkdown className="prose">{analysisResult}</ReactMarkdown>
+            </div>
           </CardContent>
         </Card>
-
-        <Button
-          onClick={handleRunAnalysis}
-          disabled={isLoading}
-          className="w-full"
-        >
-          {isLoading ? "Analyzing..." : "Run Analysis"}
-        </Button>
-
-        {showAnalysis && analysisResult && (
-          <Card>
-            <CardHeader><CardTitle>Analysis Result</CardTitle></CardHeader>
-            <CardContent>
-              <div className="whitespace-pre-wrap">
-                <ReactMarkdown className="prose">{analysisResult}</ReactMarkdown>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </>
+      )}
     </div>
   );
 }

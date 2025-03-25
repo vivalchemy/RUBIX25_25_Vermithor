@@ -67,7 +67,7 @@ function FilterSection({
   min: number
   max: number
   step: number
-  icon: any
+  icon: React.ElementType
   unit: string
 }) {
   return (

@@ -10,6 +10,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"; // Import Popover
 import { useRouter } from 'next/navigation';
 
+interface GeocodeResult {
+  formatted: string;
+}
+
+
 export function SignUpForm({
   className,
   setLoginState,
@@ -50,8 +55,8 @@ export function SignUpForm({
           limit: 5,
         },
       });
-      const results = response.data.results;
-      setSuggestions(results.map((result: any) => result.formatted));
+      const results: GeocodeResult[] = response.data.results;
+      setSuggestions(results.map((result) => result.formatted));
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     }

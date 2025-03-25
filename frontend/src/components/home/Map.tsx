@@ -12,6 +12,15 @@ const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLa
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Polyline = dynamic(() => import("react-leaflet").then((mod) => mod.Polyline), { ssr: false });
 
+interface GeocodeResult {
+  formatted: string;
+}
+
+interface WeatherCondition {
+  waypoint: string;
+}
+
+
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -79,8 +88,8 @@ export default function Map() {
           limit: 5,
         },
       });
-      const results = response.data.results;
-      setSuggestions(results.map((result: any) => result.formatted));
+      const results: GeocodeResult[] = response.data.results;
+      setSuggestions(results.map((result) => result.formatted));
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     }
@@ -122,13 +131,15 @@ export default function Map() {
 
       const data = response.data;
 
-      const fetchedWaypoints = data.weather_conditions.map((w: any) => {
+      const fetchedWaypoints = data.weather_conditions.map((w: WeatherCondition) => {
         const [lat, lon] = w.waypoint
-          .match(/\(([^)]+)\)/)[1]
-          .split(", ")
-          .map((v) => parseFloat(v));
+          .match(/\(([^)]+)\)/)?.[1]
+          ?.split(", ")
+          .map((v) => parseFloat(v)) ?? [0, 0]; // Fallback to avoid runtime errors
+
         return [lat, lon] as [number, number];
       });
+
 
       setWaypoints(fetchedWaypoints);
       setRouteInfo({

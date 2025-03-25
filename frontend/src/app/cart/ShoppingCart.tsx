@@ -10,6 +10,7 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Vendor } from "@/lib/types/Reset"
 import { Item } from "@/lib/types/Reset"
 import axios from "axios"
+import Image from "next/image"
 
 export interface CartItem {
     orderId: number
@@ -164,7 +165,7 @@ export default function ShoppingCart() {
                         {cartItems.map((item) => (
                             <li key={item.orderId} className="flex items-center justify-between border-b pb-4">
                                 <div className="flex items-center space-x-4">
-                                    <img src={item.item.imgLink} alt={item.item.name} className="w-16 h-16 object-cover" />
+                                    <Image src={item.item.imgLink} alt={item.item.name} className="w-16 h-16 object-cover" />
                                     <div>
                                         <h3 className="font-semibold">{item.item.name}</h3>
                                         <p className="text-sm text-gray-500">Vendor: {item.vendor.shopName}</p>

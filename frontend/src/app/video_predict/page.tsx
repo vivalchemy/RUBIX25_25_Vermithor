@@ -23,7 +23,7 @@ export default function HomePage() {
     }
   }
 
-  const requestCameraAccess = async () => {
+  const requestCameraAccess = async (): Promise<boolean> => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       stream.getTracks().forEach(track => track.stop())
@@ -43,11 +43,11 @@ export default function HomePage() {
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
       };
-      reader.readAsDataURL(file); // Read file as data URL for preview
+      reader.readAsDataURL(file);
 
       const formData = new FormData();
       formData.append('file', file);
-    };
+    }
   }
 
   const handleRemoveImage = () => {
@@ -81,7 +81,7 @@ export default function HomePage() {
     }
   }
 
-  const generateAndUploadImageFile = async (imageDataUrl: string) => {
+  const generateAndUploadImageFile = async (imageDataUrl: string): Promise<File> => {
     imageDataUrl = imageDataUrl.split(',')[1] || imageDataUrl;
     console.log(imageDataUrl);
     const filename = 'image.jpeg';
@@ -120,7 +120,7 @@ export default function HomePage() {
     }
   }, []);
 
-  const handleSubmitForm = (formData: any) => {
+  const handleSubmitForm = (formData: Record<string, unknown>) => {
     console.log("Form submitted with data:", formData);
   };
 
