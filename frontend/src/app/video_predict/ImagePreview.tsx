@@ -40,7 +40,15 @@ export function ImagePreview({
     <div className='w-[70%]'>
       {selectedImage ? (
         <div className="relative w-full h-full">
-          <Image src={selectedImage} alt="Uploaded" className="w-full h-full object-contain" />
+          <div className="relative w-full h-full">
+            <Image
+              src={selectedImage}
+              alt="Uploaded"
+              fill
+              className="object-contain"
+            />
+          </div>
+
           <Button
             variant="destructive"
             size="icon"

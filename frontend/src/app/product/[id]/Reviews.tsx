@@ -45,7 +45,7 @@ function Reviews({ id }: { id: string }) {
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/reviews`, {
         ...updatedReview,
-        vendorId: 0, 
+        vendorId: 0,
         itemId: id,
         customerId: customerId,
       });
@@ -129,7 +129,7 @@ function Reviews({ id }: { id: string }) {
                       <p className="text-xs text-gray-500 mt-1">Confidence: {review.confidence}</p>
                     </>
                   ) : (<div></div>)}
-                  <p className="text-xs text-gray-500 mt-1">Date: {review.reviewDate.toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500 mt-1">Date: {new Date(review.reviewDate).toLocaleDateString()}</p>
                 </div>
               </div>
             </CardContent>

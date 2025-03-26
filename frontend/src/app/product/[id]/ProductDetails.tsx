@@ -118,11 +118,15 @@ function ProductDetails({ id }: { id: string }) {
   return (
     <div className="grid md:grid-cols-2 gap-8 mb-12">
       <div className="relative rounded-lg overflow-hidden shadow-lg group">
-        <Image
-          src={product?.imgLink || "/api/placeholder/800/600"}
-          alt={product?.name || "Product image"}
-          className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-300"
-        />
+        <div className="relative w-full h-[400px]">
+          <Image
+            src={product?.imgLink || ""}
+            alt={product?.name || "Product image"}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+
         <Button
           variant="outline"
           size="icon"

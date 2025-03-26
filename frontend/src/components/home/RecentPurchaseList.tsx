@@ -72,11 +72,15 @@ export default function RecentProducts() {
               <CardContent className="p-0">
                 {/* Image Container */}
                 <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
-                  <Image
-                    src={product.imgLink || "/placeholder.svg"}
-                    alt={product.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={product.imgLink || "/placeholder.svg"}
+                      alt={product.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Rating Badge */}

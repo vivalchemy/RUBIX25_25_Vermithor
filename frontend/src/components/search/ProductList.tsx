@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { EnhancedPagination } from "@/components/search/EnhancedPagination";
 import { useRouter } from "next/navigation";
-import { Product } from "@/lib/types/Reset";
+import { Product, CartItem } from "@/lib/types/Reset";
 
 //TODO: go to line 61 and remove the - 1 from the product id
 export function ProductList({ products, itemsPerPage }: { products: Product[]; itemsPerPage: number }) {
@@ -19,18 +19,18 @@ export function ProductList({ products, itemsPerPage }: { products: Product[]; i
   const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   function handleAddToCart(product: Product) {
-    const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    const cart: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
 
     // Check if the product already exists in the cart
-    const existingProductIndex = cart.findIndex(item => item.id === product.itemId);
+    const existingProductIndex = cart.findIndex((item: CartItem) => item.id === product.itemId);
 
     if (existingProductIndex >= 0) {
       // If product already exists in cart, just update the quantity
       cart[existingProductIndex].quantity += 1;
     } else {
       // Otherwise, add the product with quantity 1
-      const productWithQuantity = { ...product, quantity: 1 };
-      cart.push(productWithQuantity);
+      const productWithQuantity = { ...product, id: product.itemId, quantity: 1 };
+        cart.push(productWithQuantity);
     }
 
     // Save the updated cart back to localStorage
@@ -67,7 +67,7 @@ export function ProductList({ products, itemsPerPage }: { products: Product[]; i
           <Card
             key={product.itemId}
             className="group hover:shadow-lg transition-all duration-200 overflow-hidden"
-            onClick={() => router.push(`/product/${product.itemId - 1}`)}
+            onClick={() => router.push(`/product/${Number(product.itemId) - 1}`)}
           >
             <div className="sm:flex items-start p-4 gap-6">
               {/* Image Section */}

@@ -22,7 +22,7 @@ type OfferType = {
   products: ProductType[];
 };
 
-type OffersType = OfferType[];
+export type OffersType = OfferType[];
 
 function OfferPage() {
   const { id } = useParams<{ id: string }>();
@@ -84,11 +84,15 @@ function OfferPage() {
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {/* Offer Image */}
           <div className="relative rounded-lg overflow-hidden shadow-lg group">
-            <Image
-              src={currentOffer.image || "/api/placeholder/800/600"}
-              alt={currentOffer.title}
-              className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+            <div className="relative w-full h-[400px]">
+              <Image
+                src={currentOffer.image || ""}
+                alt={currentOffer.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+
             <Button
               variant="outline"
               size="icon"
@@ -159,11 +163,14 @@ function OfferPage() {
               <Card key={offer.id} className="overflow-hidden hover:shadow-md transition-shadow duration-300">
                 <CardContent className="p-0">
                   <div className="flex items-center">
-                    <Image
-                      src={offer.image || "/api/placeholder/200/200"}
-                      alt={offer.title}
-                      className="w-24 h-24 object-cover"
-                    />
+                    <div className="relative w-24 h-24">
+                      <Image
+                        src={offer.image || ""}
+                        alt={offer.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                     <div className="p-4">
                       <h3 className="font-medium text-base mb-1">{offer.title}</h3>
                       <Button className="mt-2" onClick={() => handleAddToCart(offer.products[0])}>
@@ -171,6 +178,7 @@ function OfferPage() {
                       </Button>
                     </div>
                   </div>
+
                 </CardContent>
               </Card>
             ))}

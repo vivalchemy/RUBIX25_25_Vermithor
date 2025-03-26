@@ -127,9 +127,9 @@ export default function ShoppingCart() {
                 await axios.patch(`/api/orders/quantity/${item.orderId}?quantity=${newQuantity}&status=pending`);
                 console.log("Order quantity successfully updated");
                 window.location.reload();
-              } catch (error) {
+            } catch (error) {
                 console.error("Error updating order quantity:", error);
-              }
+            }
         }
     }
 
@@ -165,7 +165,14 @@ export default function ShoppingCart() {
                         {cartItems.map((item) => (
                             <li key={item.orderId} className="flex items-center justify-between border-b pb-4">
                                 <div className="flex items-center space-x-4">
-                                    <Image src={item.item.imgLink} alt={item.item.name} className="w-16 h-16 object-cover" />
+                                    <div className="relative w-16 h-16">
+                                        <Image
+                                            src={item.item.imgLink}
+                                            alt={item.item.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
                                     <div>
                                         <h3 className="font-semibold">{item.item.name}</h3>
                                         <p className="text-sm text-gray-500">Vendor: {item.vendor.shopName}</p>

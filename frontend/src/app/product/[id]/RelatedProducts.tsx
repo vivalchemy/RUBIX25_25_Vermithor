@@ -11,14 +11,18 @@ function RelatedProducts({ products, handleAddToCart }: { products: Product[], h
       <h2 className="text-xl font-semibold mb-6 text-gray-900">Frequently Bought Together</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {products.map((product) => (
-          <Card key={product.itemId} className="overflow-hidden hover:shadow-md transition-shadow duration-300">
+          <Card key={product.name} className="overflow-hidden hover:shadow-md transition-shadow duration-300">
             <CardContent className="p-0">
               <div className="flex items-center">
-                <Image
-                  src={product.imgLink || "/api/placeholder/200/200"}
-                  alt={product.name}
-                  className="w-24 h-24 object-cover"
-                />
+                <div className="relative w-24 h-24">
+                  <Image
+                    src={product.imgLink || ""}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
                 <div className="p-4">
                   <h3 className="font-medium text-base mb-1">{product.name}</h3>
                   <div className="flex items-center gap-3">

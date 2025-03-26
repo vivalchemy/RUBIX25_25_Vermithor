@@ -59,14 +59,6 @@ export function Details({ customer, onUpdate }: CustomerDetailsProps) {
               <Input id="email" name="email" type="email" value={editedCustomer.email} onChange={handleChange} />
             </div>
             <div>
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input id="phoneNumber" name="phoneNumber" value={editedCustomer.phone} onChange={handleChange} />
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" name="location" value={editedCustomer.location} onChange={handleChange} />
-            </div>
-            <div>
               <Label htmlFor="address">Address</Label>
               <Input id="address" name="address" value={editedCustomer.address} onChange={handleChange} />
             </div>
@@ -84,12 +76,6 @@ export function Details({ customer, onUpdate }: CustomerDetailsProps) {
             </p>
             <p>
               <strong>Email:</strong> {customer.email}
-            </p>
-            <p>
-              <strong>Phone:</strong> {customer.phone}
-            </p>
-            <p>
-              <strong>Location:</strong> {customer.location}
             </p>
             <p>
               <strong>Address:</strong> {customer.address}

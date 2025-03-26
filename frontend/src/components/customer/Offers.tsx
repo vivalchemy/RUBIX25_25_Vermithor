@@ -11,8 +11,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Loader2 } from "lucide-react";
-import type { OffersType } from "@/lib/types";
 import Image from "next/image"
+import { OffersType } from "@/app/offers/[id]/page";
 
 export function Offers() {
   const [offers, setOffers] = useState<OffersType>([]);
@@ -85,10 +85,12 @@ export function Offers() {
                       <Image
                         src={offer.image || "/placeholder.svg"}
                         alt={offer.title}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover/card:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300" />
                     </div>
+
 
                     {/* Content */}
                     <div className="p-6 space-y-3">
