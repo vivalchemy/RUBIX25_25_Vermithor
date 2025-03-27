@@ -3,14 +3,9 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import axios from "axios";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
-// Dynamically import React Leaflet components to avoid SSR issues
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Polyline = dynamic(() => import("react-leaflet").then((mod) => mod.Polyline), { ssr: false });
+// Dynamically import Leaflet to prevent SSR issues
+const LeafletMap = dynamic(() => import("../Leaflet/Leaflet"), { ssr: false });
 
 interface GeocodeResult {
   formatted: string;
@@ -19,12 +14,6 @@ interface GeocodeResult {
 interface WeatherCondition {
   waypoint: string;
 }
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
 
 export default function Map() {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -44,7 +33,7 @@ export default function Map() {
 
   // Get user's current location
   useEffect(() => {
-    if (navigator.geolocation) {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -54,15 +43,13 @@ export default function Map() {
           console.error("Error fetching user location:", error);
         }
       );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
     }
 
     // Fetch vendors
     const fetchVendors = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/vendors`);
-        setVendors(response.data); // Assuming the response contains an array of vendors
+        setVendors(response.data);
       } catch (error) {
         console.error("Error fetching vendors:", error);
       }
@@ -132,11 +119,10 @@ export default function Map() {
         const [lat, lon] = w.waypoint
           .match(/\(([^)]+)\)/)?.[1]
           ?.split(", ")
-          .map((v) => parseFloat(v)) ?? [0, 0]; // Fallback to avoid runtime errors
+          .map((v) => parseFloat(v)) ?? [0, 0];
 
         return [lat, lon] as [number, number];
       });
-
 
       setWaypoints(fetchedWaypoints);
       setRouteInfo({
@@ -149,17 +135,6 @@ export default function Map() {
     }
     setLoading(false);
   };
-
-  // Define a constant icon color for all vendor markers
-  const vendorIcon = new L.Icon({
-    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    shadowSize: [41, 41],
-    iconColor: "#FF5733", // Color set for all vendors (change this to any desired color)
-  });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -242,40 +217,13 @@ export default function Map() {
         </div>
       )}
 
-      <div className="h-[400px] w-full mx-auto relative mb-8">
-        <MapContainer
-          center={userLocation || [19.0760, 72.8777]}
-          zoom={10}
-          style={{ height: "100%", width: "100%" }}
-          className="rounded-lg"
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          {userLocation && <Marker position={userLocation} />}
-          {originCoords && <Marker position={originCoords} />}
-          {destinationCoords && <Marker position={destinationCoords} />}
-          {waypoints.length > 1 && (
-            <>
-              <Polyline positions={waypoints} color="blue" />
-              {waypoints.map((waypoint, index) => (
-                <Marker key={index} position={waypoint} />
-              ))}
-            </>
-          )}
-          {/* All vendor locations with the same color */}
-          {vendors.map((vendor, index) => (
-            <Marker
-              key={index}
-              position={[vendor.location_lat, vendor.location_lon]}
-              icon={vendorIcon} // Apply same icon for all vendors
-            >
-              <div>{vendor.name}</div> {/* Display vendor name if necessary */}
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
+      <LeafletMap 
+        userLocation={userLocation} 
+        originCoords={originCoords} 
+        destinationCoords={destinationCoords} 
+        waypoints={waypoints}
+        vendors={vendors}
+      />
     </div>
   );
 }

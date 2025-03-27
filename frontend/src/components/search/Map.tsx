@@ -11,7 +11,6 @@ const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLa
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
-
 // Fix Leaflet default icon paths
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -22,8 +21,12 @@ L.Icon.Default.mergeOptions({
 export function Map({ products }: { products: Product[] }) {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // Ensure this only runs on the client-side
+    setIsClient(true);
+
     const fetchVendors = async () => {
       try {
         const vendorData: Vendor[] = await Promise.all(
@@ -53,28 +56,30 @@ export function Map({ products }: { products: Product[] }) {
     if (products.length > 0) {
       fetchVendors();
     }
+
+    // Check if geolocation is available before using it
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([position.coords.latitude, position.coords.longitude]);
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+        }
+      );
+    }
   }, [products]);
 
-
-  // Fetch user location
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
-      },
-      (error) => {
-        console.error("Error getting user location:", error);
-      }
-    );
-  }, []);
+  // Default location if user location is not available
+  const defaultLocation: [number, number] = [0, 0];
 
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Nearby Vendors</h2>
       <div className="h-64 rounded-lg">
-        {userLocation ? (
+        {isClient && (userLocation || defaultLocation) ? (
           <MapContainer
-            center={userLocation}
+            center={userLocation || defaultLocation}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
           >
@@ -83,9 +88,11 @@ export function Map({ products }: { products: Product[] }) {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             {/* User Marker */}
-            <Marker position={userLocation}>
-              <Popup>You are here</Popup>
-            </Marker>
+            {userLocation && (
+              <Marker position={userLocation}>
+                <Popup>You are here</Popup>
+              </Marker>
+            )}
             {/* Vendor Markers */}
             {vendors.map((vendor, index) => (
               <Marker key={index} position={[vendor.location_lat, vendor.location_lon]}>
