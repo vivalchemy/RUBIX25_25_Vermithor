@@ -2,7 +2,26 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["moorlandseater.com"], // Allow external images from this domain
+    domains: [
+      'freshindiaorganics.com',
+      'moorlandseater.com',
+      'www.nipponexpress.com',
+      'extension.colostate.edu',
+      'media.istockphoto.com',
+      'images.jdmagicbox.com',
+      'shutterstock.com',
+      'liveorganic.co.in',
+      'iorganicmilk.com',
+      'static.toiimg.com',
+      'm.media-amazon.com',
+      'epigamiastore.com',
+      'pintola.in',
+      'dulwichhillgourmetmeats.com.au',
+      '5.imimg.com',
+      'www.licious.in',
+      'www.heinens.com',
+      'encrypted-tbn0.gstatic.com'
+    ], // Allow external images from this domain
   },
   async rewrites() {
     return [

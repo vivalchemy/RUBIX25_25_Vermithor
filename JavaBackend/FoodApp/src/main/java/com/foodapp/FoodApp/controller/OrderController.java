@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.time.LocalDateTime;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/orders")
 public class OrderController {
 

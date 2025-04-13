@@ -21,7 +21,7 @@ public class StripeService {
                     .setAmount(Math.round(request.getAmount()))
                     .setCurrency(request.getCurrency())
                     .setPaymentMethod("pm_card_visa")
-                    .setReturnUrl("http://localhost:3000/")
+                    .setReturnUrl("*")
                     .setConfirm(true)
                     .build();
 

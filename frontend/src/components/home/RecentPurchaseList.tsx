@@ -14,17 +14,20 @@ export default function RecentProducts() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    axios
-      .get("/data/products.json")
-      .then((response) => {
-        setProducts(response.data.products);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/api/items`);
+        console.log(response.data);
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
         setError("Failed to load recent products");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   if (loading) {
